@@ -9,7 +9,7 @@ import App from './components/App';
 
 ReactDOM.render((
 	<BrowserRouter>
-    	<Switch>
+		<Switch>
 			<Route exact path='/' component={Home}/>
 			<Route path='/youcant' component={App}/>
 		</Switch>

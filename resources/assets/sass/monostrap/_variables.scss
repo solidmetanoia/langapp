@@ -122,7 +122,7 @@ $theme-colors: (
   info: lighten($main, $theme-color-interval*4),
   warning: darken($main, $theme-color-interval*2),
   danger: darken($main, $theme-color-interval*4),
-  light: lighten($main, $theme-color-interval*8),
+  light: lighten($main, $theme-color-interval*6),
   dark: darken($main, $theme-color-interval*6)
 ) !default;
 

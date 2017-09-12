@@ -6,7 +6,7 @@ import { Router, Route, NavLink } from 'react-router-dom';
 export default class Sidebar extends Component {
 	render(){
 		return (
-			<div className='sidebar col-2 pt-3 px-0 bg-primary h-100'> 
+			<div className={'sidebar pt-3 px-0 bg-primary '+ this.props.className }> 
 				<div className='navbar-dark'>
 					<h4 className='navbar-brand p-3'>モノストラップ４</h4>
 					<nav className='nav navbar-nav navbar-toggleable nav-stacked flex-column'>
