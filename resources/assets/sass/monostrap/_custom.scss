@@ -1,0 +1,37 @@
+.sidebar{
+	
+	nav {
+		a {
+			&:hover {
+				background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*3);
+			}
+			&.active {
+				border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*6);
+				background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*4.5);
+			}
+		}
+	}
+
+	.navbar-dark{
+		nav {
+			a {
+				&:hover {
+					background-color: lighten(map-get($theme-colors, primary), $theme-color-interval);
+				}
+				&.active {
+					border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
+					background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*1.5);
+				}
+			}
+		}
+	}
+}
+
+.table-bordered {
+	thead th {
+		border-bottom: 2px solid lighten(map-get($theme-colors, primary), $theme-color-interval);
+	}
+	th, td {
+		border: 1px solid lighten(map-get($theme-colors, primary), $theme-color-interval);
+	}
+}
