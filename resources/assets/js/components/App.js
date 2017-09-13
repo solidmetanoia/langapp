@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import { Router, Route, NavLink } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import Question from './study/Question';
 import Card from './study/Card';
 
 export default class App extends Component {
@@ -24,18 +25,19 @@ export default class App extends Component {
 	}
 	render(){
 		return (
-			<div className='bg-success text-light h-100 overflow-hidden'>
+			<div className='bg-success text-light app d-flex flex-column flex-md-row'>
 				<Header className='d-md-none text-center'/>
-				<div className='container-fluid h-100'>
-					<div className='row h-100'>
-						<Sidebar className='d-none d-md-block col-3'/>
-						<div className='col-md-9 col-xs-12 pt-3 card-columns'>
-							<Card data={this.state.meaning}/>
-							<Card data={this.state.reading}/>
-							<Card data={this.state.listening}/>
-							<Card data={this.state.reverse}/>
-							<Card data={this.state.meaningwithex}/>
-						</div>
+				<div className='d-flex flex-column flex-md-row'>
+					<Sidebar className='d-none d-md-block'/>
+					<div className=''>
+						<Question data={this.state.meaningwithex}/>
+						{/* 
+						<Card data={this.state.meaning}/>
+						<Card data={this.state.reading}/>
+						<Card data={this.state.listening}/>
+						<Card data={this.state.reverse}/>
+						<Card data={this.state.meaningwithex}/>
+						*/}
 					</div>
 				</div>
 			</div>
