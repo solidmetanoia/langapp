@@ -24,18 +24,23 @@ export default class App extends Component {
 	}
 	render(){
 		return (
-			<div className='bg-success text-light h-100 overflow-hidden'>
+			<div className='bg-success text-light app d-flex flex-column flex-md-row'>
 				<Header className='d-md-none text-center'/>
-				<div className='container-fluid h-100'>
-					<div className='row h-100'>
-						<Sidebar className='d-none d-md-block col-3'/>
-						<div className='col-md-9 col-xs-12 pt-3 card-columns'>
-							<Card data={this.state.meaning}/>
-							<Card data={this.state.reading}/>
-							<Card data={this.state.listening}/>
-							<Card data={this.state.reverse}/>
-							<Card data={this.state.meaningwithex}/>
+				<div className='d-flex flex-row flex-grow-1'>
+					<Sidebar className='d-none d-md-block'/>
+					<div className='pt-3 d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
+						<div>
+							<div className='h1'>{this.state.meaningwithex.title}</div>
+							<div className='h3'>{this.state.meaningwithex.required}</div>
+							<input type='text' className='form-control bg-secondary text-light text-center m-1'></input>
 						</div>
+						{/*
+						<Card data={this.state.meaning}/>
+						<Card data={this.state.reading}/>
+						<Card data={this.state.listening}/>
+						<Card data={this.state.reverse}/>
+						<Card data={this.state.meaningwithex}/>
+						*/}
 					</div>
 				</div>
 			</div>

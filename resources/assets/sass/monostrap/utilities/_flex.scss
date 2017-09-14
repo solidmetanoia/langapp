@@ -42,3 +42,7 @@
     .align-self#{$infix}-stretch  { align-self: stretch !important; }
   }
 }
+
+@for $size from 1 through 8 {
+    .flex-grow-#{$size} { flex-grow: $size; }
+}
