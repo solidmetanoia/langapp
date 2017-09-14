@@ -27,11 +27,11 @@ export default class App extends Component {
 		return (
 			<div className='bg-success text-light app d-flex flex-column flex-md-row'>
 				<Header className='d-md-none text-center'/>
-				<div className='d-flex flex-column flex-md-row'>
+				<div className='d-flex flex-row flex-grow-1'>
 					<Sidebar className='d-none d-md-block'/>
-					<div className=''>
+					<div className='pt-3 d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
 						<Question data={this.state.meaningwithex}/>
-						{/* 
+						{/*
 						<Card data={this.state.meaning}/>
 						<Card data={this.state.reading}/>
 						<Card data={this.state.listening}/>
