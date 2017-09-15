@@ -67,13 +67,18 @@ class LoginController extends Controller
             // execute
             $response = curl_exec($curl);
 
+            if(curl_errno($curl)){
+                echo 'error:' . curl_error($curl);
+                return response()->json($response, curl_errno($curl));
+            }
             // close the connection
             curl_close($curl);
 
+
             // TO DO
             // check if response is not error, if error, 401.
-            return ($response);
+            return response()->json($response, 200);
         } 
-        return response(401);
+        return response()->json('Unauthorized', 401);
     }
 }

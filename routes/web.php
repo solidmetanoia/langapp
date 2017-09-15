@@ -11,6 +11,10 @@
 |
 */
 
+Route::post('/login', function () {
+    return view('welcome');
+})->name('login');
+
 Route::get('/{path?}', function () {
     return view('welcome');
 })->where('path', '.*');
