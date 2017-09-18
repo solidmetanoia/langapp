@@ -1,7 +1,8 @@
 // Register.js
 
 import React, {Component} from 'react';
-import { Router, Route, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import Input from './components/Input';
 
 export default class Register extends Component {
 	
@@ -13,32 +14,43 @@ export default class Register extends Component {
 			password: ''
 	    };
 
-        this.handleInput = this.handleInput.bind(this);
+        this.handleReceive = this.handleReceive.bind(this);
         this.submitRegister = this.submitRegister.bind(this);
 	}
 
 	submitRegister(e){
 		e.preventDefault();
 		axios.post('/api/register', this.state)
-			.then(function(response){
-				// If response.status == 200, good, redirect to login or intended
-				// Else, show error
-				console.log(response);
+			.then((response) => {
+				if(response.status == 200)
+			    	this.props.history.push("/");
+			})
+			.catch((error) => {
+				console.log(error);
 			});
 	}
 
-	handleInput(e){
-		const target = e.target;
+	handleReceive(target){
 		this.setState({
 			[target.name]: target.value
 		});
 	}
 
 	render(){
+		var inputs = [
+    		{ name: 'username', label: 'Username:', placeholder: 'dekinai-kun', type: 'text' },
+    		{ name: 'email', label: 'E-mail:', placeholder: 'cantlearn@japanese.co.jp', type: 'email' },
+    		{ name: 'password', label: 'Password:', placeholder: '助けて', type: 'password' }
+        ];
+
 		return (
 			<div className='bg-success text-light app d-flex flex-column align-content-center justify-content-center'>
 				<form action='/api/register' method='post' className='container'>
 					<div>
+						{inputs.map((input, i) => {
+							return <Input data={input} key={i} onChangeCallback={this.handleReceive}/>;
+						})}
+						{/*
 						<div className='form-group row'>
 							<label className='col-2 col-form-label' htmlFor='username'>Username:</label>
 							<div className='col-10'>
@@ -57,7 +69,11 @@ export default class Register extends Component {
 								<input id='password' type='password' value={this.state.password} onChange={this.handleInput} className='form-control' name='password' placeholder='助けて'></input>
 							</div>
 						</div>
-						<button type='submit' onClick={this.submitRegister} className='btn btn-primary btn-block'>Register</button>
+						*/}
+						<div className='d-flex flex-md-row flex-sm-column-reverse'>
+							<NavLink className='btn btn-secondary flex-grow-1' to={'/login'}>Login</NavLink>
+							<button type='submit' onClick={this.submitRegister} className='btn btn-primary flex-grow-2'>Register</button>
+						</div>
 					</div>
 				</form>
 			</div>
