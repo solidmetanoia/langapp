@@ -23,6 +23,7 @@ export default class Login extends Component {
 		axios.post('/api/login', this.state)
 			.then((response) => {
 				if(response.status == 200){
+					localStorage.setItem('access_token', JSON.parse(response.data).access_token);
 				    this.props.history.push("/youcant");
 				} 
 			})
@@ -52,7 +53,7 @@ export default class Login extends Component {
 						})}
 						<div className='d-flex flex-md-row flex-sm-column'>
 							<button type='submit' onClick={this.submitLogin} className='btn btn-primary flex-grow-2'>Login</button>
-							<NavLink className='btn btn-secondary flex-grow-1' to={'/register'}>Register</NavLink>
+							<NavLink className='btn btn-secondary flex-grow-1' to={'/register'}>I'm a new user</NavLink>
 						</div>
 					</div>
 				</form>
