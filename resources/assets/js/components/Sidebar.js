@@ -17,7 +17,7 @@ export default class Sidebar extends Component {
 							<NavLink className='py-1 nav-link px-3 m-0 h5' to={'/youcant'}>Learn</NavLink>
 						</li>
 						<li className='nav-item'>
-							<NavLink className='py-1 nav-link px-3 m-0 h5' to={'/portfolio'}>Portfolio</NavLink>
+							<NavLink className='py-1 nav-link px-3 m-0 h5' to={'/logout'}>Logout</NavLink>
 						</li>
 					</nav>
 				</div>

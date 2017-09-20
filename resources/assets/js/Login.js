@@ -1,7 +1,7 @@
 // Login.js
 
 import React, {Component} from 'react';
-import { NavLink, withRouter } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Input from './components/Input';
 
 export default class Login extends Component {
@@ -11,7 +11,8 @@ export default class Login extends Component {
 
 		this.state = {
 			username: '',
-			password: ''
+			password: '',
+			errors: ''
 	    };
 
         this.handleReceive = this.handleReceive.bind(this);
@@ -28,7 +29,11 @@ export default class Login extends Component {
 				} 
 			})
 			.catch((error) => {
-				console.log(error);
+				// Set up fail state here.
+				// var output = Object.keys(error.response.data).map((key) => {
+					// return [<div>{error.response.data[key]}</div>];
+				// });
+				this.setState({error: output})
 			});
 	}
 
@@ -57,6 +62,7 @@ export default class Login extends Component {
 						</div>
 					</div>
 				</form>
+				<div className='text-warning'>{this.state.errors}</div>
 			</div>
 		)
 	}
