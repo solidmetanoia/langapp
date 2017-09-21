@@ -8,12 +8,17 @@ export default class Logout extends Component {
 	constructor() {
 		super();
 
-		localStorage.removeItem('access_token');
-		axios.post('/logout', {})
+		axios.post('/api/logout', {}, {
+				headers: {
+					Accept: 'application/json',
+					Authorization: 'Bearer '+localStorage.getItem('access_token')
+				}
+			})
 			.then((response) => {
 			})
 			.catch((error) => {
 			});
+		localStorage.removeItem('access_token');
 	}
 
 	render(){

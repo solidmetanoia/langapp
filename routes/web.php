@@ -17,7 +17,7 @@ Route::post('/login', function () {
 
 Route::post('/login', 'Auth\LoginController@login');
 Route::post('/login/refresh', 'Auth\LoginController@refresh');
-Route::post('/logout', 'Auth\LoginController@logout');
+
 Route::post('/register', 'Auth\RegisterController@register');
 
 Route::get('/{path?}', function () {

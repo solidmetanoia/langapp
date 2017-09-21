@@ -60,7 +60,7 @@ class LoginController extends Controller
 		// set post fields
 		$curl = curl_init();
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => "http://learnlang.app/oauth/token",
+			CURLOPT_URL => "http://".$_SERVER['SERVER_NAME']."/oauth/token",
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => "",
 			CURLOPT_MAXREDIRS => 10,
@@ -100,19 +100,18 @@ class LoginController extends Controller
 		return response()->json(json_encode($return_data), 200);
 	}
 
-	public function logout(){
-		/*
-		// Cannot be used, we're stateless.
+	public function logout(Request $request){
+		
 		$accessToken = \Auth::user()->token();
 
 		$refreshToken = \DB::table('oauth_refresh_tokens')
-			->where('access_token_id', $accessToken->id)
+			->where('access_token_id', $request->input('access_token'))
 			->update([
 				'revoked' => true
 			]);
 
 		$accessToken->revoke();
-		*/
+		
 		\Cookie::queue(\Cookie::forget('refreshToken'));
 
 		return response()->json(['Logged out'], 200);
