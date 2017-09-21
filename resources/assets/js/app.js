@@ -10,6 +10,7 @@ import Login from './Login';
 import Logout from './Logout';
 import Register from './Register';
 import ProtectedRoute from './components/ProtectedRoute';
+import PageNotFound from './components/PageNotFound';
 
 ReactDOM.render((
 	<BrowserRouter>
@@ -18,9 +19,8 @@ ReactDOM.render((
 			<Route exact path='/login' component={Login}/>
 			<Route exact path='/logout' component={Logout}/>
 			<Route exact path='/register' component={Register}/>
-			<Route>
-				<ProtectedRoute path='/youcant' component={LearnApp}/>
-			</Route>
+			<ProtectedRoute path='/learn' component={LearnApp}/>
+			<Route component={PageNotFound} />
 		</Switch>
 	</BrowserRouter>
 ), document.getElementById('app'));

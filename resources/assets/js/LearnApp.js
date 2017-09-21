@@ -7,6 +7,8 @@ import Sidebar from './components/Sidebar';
 import Question from './components/study/Question';
 import Card from './components/study/Card';
 
+
+
 export default class LearnApp extends Component {
 	constructor() {
 		super();
@@ -16,6 +18,7 @@ export default class LearnApp extends Component {
 		// how do I send call of child object to parent?
 		// do I keep it as buttons not more components?
 		this.state = {
+			data: {},
 			meaning: {title: '空', required: 'meaning', answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']},
 			meaningwithex: {title: '空', example: '空に飛びたい', required: 'meaning', answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']},
 			reading: {title: '空', required: 'reading', type: "text"},
@@ -23,6 +26,9 @@ export default class LearnApp extends Component {
 			reverse: {title: 'sky', required: 'reading', answers: ['空', '土', '上着', '無理', '無料', '生']},
 		};
 	}
+
+	
+
 	render(){
 		return (
 			<div className='bg-success text-light app d-flex flex-column flex-md-row'>
@@ -30,7 +36,11 @@ export default class LearnApp extends Component {
 				<div className='d-flex flex-row flex-grow-1'>
 					<Sidebar className='d-none d-md-block'/>
 					<div className='pt-3 d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
+						<Route exact path='/learn' component={Initial}/>
+						<Route path='/learn/japanese/:question' component={DisplayJapaneseQuestion}/>
+						{/*
 						<Question data={this.state.meaningwithex}/>
+						*/}
 						{/*
 						<Card data={this.state.meaning}/>
 						<Card data={this.state.reading}/>
@@ -43,4 +53,37 @@ export default class LearnApp extends Component {
 			</div>
 		)
 	}
+}
+
+const Initial = ({match}) => {
+	return (
+		<div>
+			<NavLink className='py-1 nav-link px-3 m-0 h5' exact to={'/learn/japanese/kanji'}>japanese kanji</NavLink>
+			<NavLink className='py-1 nav-link px-3 m-0 h5' exact to={'/learn/japanese/vocabulary'}>japanese vocabulary</NavLink>
+			<NavLink className='py-1 nav-link px-3 m-0 h5' exact to={'/learn/japanese/grammar'}>japanese grammar</NavLink>
+		</div>
+	)
+}
+
+// Generalization later.
+const DisplayJapaneseQuestion = ({match}) => {
+
+	/*
+	axios.get('/api/japanese/'+match.params.question, {
+			headers: {
+				Accept: 'application/json',
+				Authorization: 'Bearer '+localStorage.getItem('access_token')
+			}
+		})
+		.then((response) => {
+			return (
+				<Question type={match.params.question} data={{title: '空', example: '空に飛びたい', required: match.params.question, answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']}}/>
+			)
+		})
+		.catch((error) => {
+		});
+	*/
+	return (
+		<Question type={match.params.question} data={{title: '空', example: '空に飛びたい', required: match.params.question, answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']}}/>
+	)
 }

@@ -9,6 +9,11 @@ export default class Logout extends Component {
 		super();
 
 		localStorage.removeItem('access_token');
+		axios.post('/logout', {})
+			.then((response) => {
+			})
+			.catch((error) => {
+			});
 	}
 
 	render(){

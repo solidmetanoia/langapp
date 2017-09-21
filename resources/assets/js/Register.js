@@ -11,7 +11,8 @@ export default class Register extends Component {
 		this.state = {
 			username: '',
 			email: '',
-			password: ''
+			password: '',
+			errors: '',
 		};
 
 		this.handleReceive = this.handleReceive.bind(this);
@@ -20,14 +21,19 @@ export default class Register extends Component {
 
 	submitRegister(e){
 		e.preventDefault();
-		axios.post('/api/register', this.state)
+		axios.post('/register', this.state)
 			.then((response) => {
 				if(response.status == 201){
 					this.props.history.push("/");
 				}
 			})
 			.catch((error) => {
-				console.log(error);
+				// Set up fail state here.
+				var output = Object.keys(error.response.data.errors).map((key) => {
+					return [<div>{error.response.data.errors[key]}</div>];
+				});
+				this.setState({errors: output})
+				setTimeout(()=>{this.setState({errors: ''})}, 3000);
 			});
 	}
 
@@ -46,7 +52,7 @@ export default class Register extends Component {
 
 		return (
 			<div className='bg-success text-light app d-flex flex-column align-content-center justify-content-center'>
-				<form action='/api/register' method='post' className='container'>
+				<form action='/register' method='post' className='container'>
 					<div>
 						{inputs.map((input, i) => {
 							return <Input data={input} key={i} onChangeCallback={this.handleReceive}/>;
@@ -57,6 +63,9 @@ export default class Register extends Component {
 						</div>
 					</div>
 				</form>
+				{(this.state.errors) &&
+					<div className='bg-warning text-white text-center rounded error'>{this.state.errors}</div>
+				}
 			</div>
 		)
 	}
