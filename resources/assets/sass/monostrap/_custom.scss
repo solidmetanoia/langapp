@@ -12,6 +12,10 @@
 				background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*4.5);
 			}
 		}
+
+		.nav-item > div {
+			border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*6);
+		}
 	}
 
 	.navbar-dark{
@@ -26,11 +30,12 @@
 				}
 			}
 		}
-	}
 
-	.nav-item > div {
-		padding-left: 10px;
+		.nav-item > div {
+			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
+		}
 	}
+	
 }
 
 .app {

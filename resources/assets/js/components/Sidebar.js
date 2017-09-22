@@ -30,6 +30,7 @@ export default class Sidebar extends Component {
 						</li>
 						
 					</nav>
+					{/*Insert study progress here?*/}
 				</div>
 			</div>
 		)

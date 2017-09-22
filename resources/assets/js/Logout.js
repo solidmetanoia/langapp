@@ -18,7 +18,7 @@ export default class Logout extends Component {
 			})
 			.catch((error) => {
 			});
-		localStorage.removeItem('access_token');
+		localStorage.clear();
 	}
 
 	render(){

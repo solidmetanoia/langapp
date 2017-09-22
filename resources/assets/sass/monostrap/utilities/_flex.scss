@@ -46,3 +46,6 @@
 @for $size from 1 through 8 {
     .flex-grow-#{$size} { flex-grow: $size; }
 }
+
+.flex-center { display: flex; justify-content: center; align-content: center;}
+.flex-1 {flex: 1}

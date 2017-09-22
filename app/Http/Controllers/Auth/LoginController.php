@@ -50,6 +50,7 @@ class LoginController extends Controller
 	}
 
 	protected function try_for_token($grantType, $scope, array $data = []){
+		// Merge passport-required data with user-side data
 		$data = array_merge($data, [
 			'client_id' => env('CLIENT_ID', ''),
 			'client_secret' => env('CLIENT_SECRET', ''),
@@ -82,15 +83,17 @@ class LoginController extends Controller
 
 		$decoded_response = json_decode($response);
 
-		\Cookie::queue(
-			'refreshToken',
-			$decoded_response->refresh_token,
-			604800, // 14 days
-			null,
-			null,
-			false,
-			true // HttpOnly
-		);
+		// Oops.
+		if($grantType != 'refreshToken')
+			\Cookie::queue(
+				'refreshToken',
+				$decoded_response->refresh_token,
+				604800, // 14 days
+				null,
+				null,
+				false,
+				true // HttpOnly
+			);
 
 		$return_data = [
 			'access_token' => $decoded_response->access_token,

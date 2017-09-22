@@ -16,6 +16,6 @@ class UserController extends Controller
     }
 
     public function me(){
-    	return "Logged in, here I am";
+    	return response()->json(\Auth::user(), 200);
     }
 }

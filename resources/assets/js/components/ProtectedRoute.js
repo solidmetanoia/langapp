@@ -14,16 +14,30 @@ export default class ProtectedRoute extends Component {
 
 	componentDidMount() {
 		var self = this;
-		axios.post('/login/refresh', {})
+		axios.get('/api/me', {
+			headers: {
+				Accept: 'application/json',
+				Authorization: 'Bearer '+localStorage.getItem('access_token')
+			}
+		})
 		.then((response) => {
-			if(response.status == 200){
-				localStorage.setItem('access_token', JSON.parse(response.data).access_token);
-			}	
+			localStorage.setItem('user', JSON.stringify(response.data));
 			self.setState({allow: true, loading: false}); 
 		})
 		.catch((error) => {
-			self.setState({loading: false}); 
+			axios.post('/login/refresh', {})
+				.then((response) => {
+					if(response.status == 200){
+						localStorage.setItem('access_token', JSON.parse(response.data).access_token);
+					}	
+					self.setState({allow: true, loading: false}); 
+				})
+				.catch((error) => {
+					localStorage.removeItem('user');
+					self.setState({loading: false}); 
+				});
 		});
+		
 	}
 
 	render(){

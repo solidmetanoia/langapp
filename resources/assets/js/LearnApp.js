@@ -35,7 +35,7 @@ export default class LearnApp extends Component {
 				<Header className='d-md-none text-center'/>
 				<div className='d-flex flex-row flex-grow-1'>
 					<Sidebar className='d-none d-md-block'/>
-					<div className='pt-3 d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
+					<div className='d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
 						<Route exact path='/learn' component={Initial}/>
 						<Route path='/learn/japanese/:question' component={DisplayJapaneseQuestion}/>
 						{/*
@@ -77,13 +77,13 @@ const DisplayJapaneseQuestion = ({match}) => {
 		})
 		.then((response) => {
 			return (
-				<Question type={match.params.question} data={{title: '空', example: '空に飛びたい', required: match.params.question, answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']}}/>
+				<Question type={match.params.question} data={response.data}/>
 			)
 		})
 		.catch((error) => {
 		});
 	*/
 	return (
-		<Question type={match.params.question} data={{title: '空', example: '空に飛びたい', required: match.params.question, answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']}}/>
+		<Question type={match.params.question} data={{title: '空', example: 'I want to fly into the 「・・・」', required: 'meaning', type: 'button', answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']}}/>
 	)
 }
