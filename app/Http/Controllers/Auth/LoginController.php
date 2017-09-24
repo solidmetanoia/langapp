@@ -39,7 +39,7 @@ class LoginController extends Controller
 		if (\Auth::once($login_data)) {
 			return $this->try_for_token('password', '', $login_data);
 		} 
-		return response()->json('Unauthenticated', 401);
+		return response()->json(['Unauthenticated'], 401);
 	}
 
 	public function refresh(Request $request){

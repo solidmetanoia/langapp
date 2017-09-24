@@ -34,7 +34,7 @@ export default class Login extends Component {
 					return [<div>{error.response.data[key]}</div>];
 				});
 				this.setState({errors: output})
-				setTimeout(()=>{this.setState({errors: ''})}, 3000);
+				setTimeout(()=>{if(this.state.errors == output)  this.setState({errors: ''})}, 3000);
 			});
 	}
 

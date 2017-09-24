@@ -18,4 +18,8 @@ class UserController extends Controller
     public function me(){
     	return response()->json(\Auth::user(), 200);
     }
+
+    // Requires:
+    // Get user data for display
+    // Get study progress
 }

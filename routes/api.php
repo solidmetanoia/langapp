@@ -16,4 +16,10 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => ['auth:api']], function () {
 	Route::post('/logout', 'Auth\LoginController@logout');
 	Route::get('/me', 'UserController@me');
+
+	Route::get('/japanese/vocabulary', 'StudyController@getVocabularyCard');
 });
+
+Route::get('/{path?}', function () {
+    return response()->json(['Invalid route'], 404);
+})->where('path', '.*');
