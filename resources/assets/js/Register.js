@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
-import Input from './components/Input';
+import InputWithLabel from './components/InputWithLabel';
 
 export default class Register extends Component {
 	
@@ -55,7 +55,7 @@ export default class Register extends Component {
 				<form action='/register' method='post' className='container'>
 					<div>
 						{inputs.map((input, i) => {
-							return <Input data={input} key={i} onChangeCallback={this.handleReceive}/>;
+							return <InputWithLabel data={input} key={i} onChangeCallback={this.handleReceive}/>;
 						})}
 						<div className='d-flex flex-md-row flex-sm-column-reverse'>
 							<NavLink className='btn btn-secondary flex-grow-1' to={'/login'}>Back to Login</NavLink>

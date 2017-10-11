@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
-import Input from './components/Input';
+import InputWithLabel from './components/InputWithLabel';
 
 export default class Login extends Component {
 
@@ -56,7 +56,7 @@ export default class Login extends Component {
 					<form action='/login' method='POST'>
 						<div>
 							{inputs.map((input, i) => {
-								return <Input data={input} key={i} onChangeCallback={this.handleReceive}/>;
+								return <InputWithLabel data={input} key={i} onChangeCallback={this.handleReceive}/>;
 							})}
 							<div className='d-flex flex-md-row flex-sm-column'>
 								<button type='submit' onClick={this.submitLogin} className='btn btn-primary flex-grow-2'>Login</button>

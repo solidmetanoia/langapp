@@ -4,10 +4,7 @@ import React, {Component} from 'react';
 import { Router, Route, NavLink } from 'react-router-dom';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
-import Question from './components/study/Question';
-import Card from './components/study/Card';
-
-
+import Question from './components/Question';
 
 export default class LearnApp extends Component {
 	constructor() {
@@ -23,8 +20,6 @@ export default class LearnApp extends Component {
 		};
 	}
 
-	
-
 	render(){
 		return (
 			<div className='bg-success text-light app d-flex flex-column flex-md-row'>
@@ -32,18 +27,8 @@ export default class LearnApp extends Component {
 				<div className='d-flex flex-row flex-grow-1'>
 					<Sidebar className='d-none d-md-block'/>
 					<div className='d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
-						<Route exact path='/learn' component={Select}/>
+						<Route exact path='/learn' component={PreSelect}/>
 						<Route path='/learn/japanese/:question' component={DisplayJapaneseQuestion}/>
-						{/*
-						<Question data={this.state.meaningwithex}/>
-						*/}
-						{/*
-						<Card data={this.state.meaning}/>
-						<Card data={this.state.reading}/>
-						<Card data={this.state.listening}/>
-						<Card data={this.state.reverse}/>
-						<Card data={this.state.meaningwithex}/>
-						*/}
 					</div>
 				</div>
 			</div>
@@ -51,7 +36,7 @@ export default class LearnApp extends Component {
 	}
 }
 
-const Select = ({match}) => {
+const PreSelect = ({match}) => {
 	return (
 		<div>
 			<NavLink className='py-1 nav-link px-3 m-0 h5' exact to={'/learn/japanese/kanji'}>japanese kanji</NavLink>
@@ -86,6 +71,29 @@ class DisplayJapaneseQuestion extends Component {
 			this.setState({data: this.state.defaultData});
 			console.log(error.response);
 		});
+
+		this.handleAnswer = this.handleAnswer.bind(this);
+	}
+
+	handleAnswer(data){
+		console.log(data);
+        this.props.onChangeCallback(data);            
+		// axios.post('/api/japanese/'+nextProps.match.params.question, data, {
+		// 		headers: {
+		// 			Accept: 'application/json',
+		// 			Authorization: 'Bearer '+localStorage.getItem('access_token')
+		// 		}
+		// 	})
+		// 	.then((response) => {
+		// 		console.log(response);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(response);
+		// 	});
+
+		// this.setState({
+		// 	[target.name]: target.value
+		// });
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -109,7 +117,7 @@ class DisplayJapaneseQuestion extends Component {
 
 	render(){
 		return (
-			<Question type={this.props.match.params.question} data={this.state.data}/>
+			<Question type={this.props.match.params.question} data={this.state.data} onChangeCallback={this.handleAnswer}/>
 		)
 	}
 }

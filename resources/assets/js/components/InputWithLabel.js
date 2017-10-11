@@ -1,8 +1,8 @@
-// Input.js
+// InputWithLabel.js
 
 import React, {Component} from 'react';
 
-export default class Input extends Component {
+export default class InputWithLabel extends Component {
 
 	constructor() {
 		super();

@@ -18,6 +18,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 	Route::get('/me', 'UserController@me');
 
 	Route::get('/japanese/vocabulary', 'StudyController@getVocabularyCard');
+	Route::post('/japanese/vocabulary', 'StudyController@postVocabularyCard');
 });
 
 Route::get('/{path?}', function () {
