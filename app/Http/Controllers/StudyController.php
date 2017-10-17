@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
+use Carbon\Carbon;
 
 class StudyController extends Controller
 {
@@ -33,6 +34,8 @@ class StudyController extends Controller
 			->where('user_id', \Auth::id())
 			// ->where('item_id', '!=', $item_id)
 			->orderBy('study_rate', 'asc')
+			->orderBy('updated_at', 'asc')
+			->orderBy('item_id', 'asc')
 			->take($this->step)
 			->get();
 
@@ -51,9 +54,10 @@ class StudyController extends Controller
 		// current_study_rate = study_rate - 1*last_updated?
 		// temporarily static distance bool
 		if($progress->first())
-			if($progress->first()->study_rate > $this->base_study_rate+15)
+			if($progress->first()->study_rate > $this->base_study_rate+10)
 				$add_new = true;
 
+		// return response()->json($add_new, 200);
 
 		if($add_new){
 			DB::beginTransaction();
@@ -77,7 +81,6 @@ class StudyController extends Controller
 					'streak' => 0
 				];
 			}
-		return response()->json('pre-add', 200);
 
 			DB::table('study_progress_core')->insert($items_to_add);
 			DB::commit();
@@ -93,12 +96,12 @@ class StudyController extends Controller
 		} 
 
 		// If card has not been updated
-		if($progress->first()->created_at != $progress->first()->updated_at)
+		if($progress->first()->updated_at != NULL)
 			$progress = $progress->shuffle();
 		$card = DB::table('study_progress_core')
 			->where('item_id', $progress->first()->item_id)
 			->join('core_6k_list', 'core_6k_list.id', '=', 'study_progress_core.item_id')
-			->select('study_progress_core.*', 'core_6k_list.*')->first();
+			->select('study_progress_core.study_rate', 'core_6k_list.*')->first();
 
 		$data['correct'] = $card;
 
@@ -111,79 +114,18 @@ class StudyController extends Controller
 			$data['answer_type'] = 'button';
 			$answers = DB::table('study_progress_core')
 				->where([
+					['user_id', '=' , \Auth::id()],
 					['item_id', '!=' , $data['correct']->id],
-					['created_at', '!=', 'updated_at']
+					['updated_at', '!=', 'NULL']
 				])
 				->inRandomOrder()->take(5)
 				->join('core_6k_list', 'core_6k_list.id', '=', 'study_progress_core.item_id')
-				->select('core_6k_list.*')->get();
-			$answers->push($data['correct']);
+				->select('core_6k_list.*')->get()->pluck('meaning');
+			$answers->push($data['correct']->meaning);
 			$data['answers'] = $answers->shuffle();
 		}
 
-
-
-
-
-		// Get first 
-
-		// Get the first item in study progress core
-		// If empty, set first X cards in upload order and ascending study rate to active
-		// From those cards ...............
-
-		// Try to avoid having the same question twice in a row but not prevent completely
-		// For question get audio of reading sound and example sentence
-		// If received card study rate over Y, change from answer type button to answer type input/text
-
-
-
-		/*
-		$item_id = 0;
-		if(isset($_GET['previous_id']))
-			$item_id = $_GET['previous_id'];
-
-		// This gets the last card in the study list that isn't the previously seen in test card.
-		$progress = DB::table('study_progress_core')
-			->where('user_id', \Auth::id())
-			// ->where('item_id', '!=', $item_id)
-			->orderBy('study_rate', 'asc')
-			->take(3)
-			->get();
-
-		if(!$progress->first()){
-			// If there are no cards in the list, add the first card in the section's database.
-			$card = DB::table('core_6k_list')->first();
-		} else {
-			// Get last ID. If last ID is over 31 study_rate and less than last_possible_id->id
-			// you can add more cards.
-			if($progress->first()->study_rate <= 31){
-				$shuffled = $progress->shuffle();
-				$card = DB::table('core_6k_list')->where('id', $shuffled->first()->item_id)->first();
-			} else {
-				$last_possible_id = DB::table('core_6k_list')->orderBy('id', 'desc')->first();
-				$last_study_id = DB::table('study_progress_core')
-					->where('user_id', \Auth::id())
-					->orderBy('item_id', 'desc')->first();
-				if($last_study_id->item_id < $last_possible_id->id){
-					$card = DB::table('core_6k_list')->where('id', $last_study_id->item_id+1)->first();
-				}
-			}
-		}
-		$data['correct'] = $card;
-
-		$answers = DB::table('study_progress_core')
-			->where('item_id', '!=' , $data['correct']->id )
-			->inRandomOrder()->take(5)
-			->join('core_6k_list', 'core_6k_list.id', '=', 'study_progress_core.item_id')
-			->select('core_6k_list.*')->get();
-		$answers->push($data['correct']);
-		$data['answer_type'] = 'button';
-		$data['answers'] = $answers->shuffle();
-		foreach($data['answers'] as $answer)
-			$answer->reading_sound = base64_encode(\Storage::get('training_core/'.$answer->reading_sound)); 
-		*/
 		return response()->json($data, 200, [], JSON_PRETTY_PRINT);
-
 	}
 
 	public function postVocabularyCard(Request $request){
@@ -191,5 +133,47 @@ class StudyController extends Controller
 		// Where in core_6k_list question check answer
 		// If true increase study_progress_core score
 		// If false reduce points by 5% percent
+
+		$data = $request->all();
+		$correct = DB::table('core_6k_list')
+			->where([
+				'id' => $data['question'],
+				'meaning' => $data['answer'] // later should be not static meaning but received
+			])->first();
+		$progress = DB::table('study_progress_core')
+			->where([
+				'user_id' => \Auth::id(),
+				'item_id' => $data['question']
+			])->first();
+
+		DB::beginTransaction();
+		if($correct){
+			$proc = DB::table('study_progress_core')
+				->where([
+					'user_id' => \Auth::id(),
+					'item_id' => $data['question']
+				])
+				->update([
+					'streak' => $progress->streak + 1,
+					'study_rate' => $progress->study_rate + 1 + $progress->streak * .25,
+					'updated_at' => Carbon::now()
+				]);
+			$output['status'] = 'success';
+		} else {
+			$proc = DB::table('study_progress_core')
+				->where([
+					'user_id' => \Auth::id(),
+					'item_id' => $data['question']
+				])
+				->update([
+					'streak' => 0,
+					'study_rate' => $progress->study_rate * .95,
+					'updated_at' => Carbon::now()
+				]);
+			$output['status'] = 'fail';
+		}
+		$output['proc'] = $proc;
+		DB::commit();
+		return response()->json($output, 200);
 	}
 }
