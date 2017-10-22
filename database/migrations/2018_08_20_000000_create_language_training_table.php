@@ -42,6 +42,9 @@ class CreateLanguageTrainingTable extends Migration
             $table->integer('streak')->default(0);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('item_id')->references('id')->on('basics_list');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
+            // $table->timestamps()->useCurrent();
             $table->primary(['user_id', 'item_id']);
         });
 
@@ -52,6 +55,9 @@ class CreateLanguageTrainingTable extends Migration
             $table->integer('streak')->default(0);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('item_id')->references('id')->on('core_6k_list');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
+            // $table->timestamps()->useCurrent();
             $table->primary(['user_id', 'item_id']);
         });
 
