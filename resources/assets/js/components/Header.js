@@ -10,7 +10,7 @@ export default class Header extends Component {
 				<nav className='justify-content-center navbar'>
 				 	<NavLink className='h4 p-3' exact to={'/'}>home</NavLink>
 				 	<NavLink className='h4 p-3' to={'/learn'}>learn</NavLink>
-				 	<NavLink className='h4 p-3' to={'/about'}>about</NavLink>
+				 	{/* <NavLink className='h4 p-3' to={'/'}>about</NavLink> */}
 				</nav>
 			</header>
 		)

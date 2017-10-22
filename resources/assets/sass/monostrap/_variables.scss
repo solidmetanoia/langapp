@@ -111,7 +111,11 @@ $bck-theme-colors: (
 ) !default;
 
 // Set main color
-$main: hsl(211, 39%, 43%);
+$main: hsl(211, 39%, 43%); 
+// $main: hsl(359, 60%, 77%); //Redish
+// $main: hsl(120, 60%, 77%); //Greenish
+// $main: hsl(211, 39%, 43%); // Blueish
+
 // Set a specific jump point for requesting color jumps
 $theme-color-interval: 8% !default;
 
@@ -123,7 +127,11 @@ $theme-colors: (
   warning: darken($main, $theme-color-interval*2),
   danger: darken($main, $theme-color-interval*4),
   light: lighten($main, $theme-color-interval*6),
-  dark: darken($main, $theme-color-interval*6)
+  dark: darken($main, $theme-color-interval*6),
+  //Alt warning
+  warning-alt: hsl(341, 45%, 60%),
+  //Alt success
+  success-alt: hsl(101, 45%, 70%),
 ) !default;
 
 

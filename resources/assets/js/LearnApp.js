@@ -28,7 +28,7 @@ export default class LearnApp extends Component {
 					<Sidebar className='d-none d-md-block'/>
 					<div className='d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
 						<Route exact path='/learn' component={PreSelect}/>
-						<Route path='/learn/japanese/:question' component={DisplayJapaneseQuestion}/>
+						<Route path='/learn/:language/:question' component={DisplayJapaneseQuestion}/>
 					</div>
 				</div>
 			</div>
@@ -46,78 +46,12 @@ const PreSelect = ({match}) => {
 	)
 }
 
-// Generalization later.
 class DisplayJapaneseQuestion extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			data: {},
-			defaultData: {title: '空', example: 'I want to fly into the 「・・・」', required: 'meaning', type: 'Noun', answer_type: 'button', answers: ['sky', 'ground', 'jacket', 'impossible', 'free', 'life']}
-		};
-
-		axios.get('/api/japanese/'+this.props.match.params.question, {
-			headers: {
-				Accept: 'application/json',
-				Authorization: 'Bearer '+localStorage.getItem('access_token')
-			}
-		})
-		.then((response) => {
-			if(response.status == 200){
-				this.setState({data: response.data});
-			}
-		})
-		.catch((error) => {
-			// Default data used to check if something changed.
-			this.setState({data: this.state.defaultData});
-			console.log(error.response);
-		});
-
-		this.handleAnswer = this.handleAnswer.bind(this);
 	}
-
-	handleAnswer(data){
-		console.log(data);
-        this.props.onChangeCallback(data);            
-		// axios.post('/api/japanese/'+nextProps.match.params.question, data, {
-		// 		headers: {
-		// 			Accept: 'application/json',
-		// 			Authorization: 'Bearer '+localStorage.getItem('access_token')
-		// 		}
-		// 	})
-		// 	.then((response) => {
-		// 		console.log(response);
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(response);
-		// 	});
-
-		// this.setState({
-		// 	[target.name]: target.value
-		// });
-	}
-
-	componentWillReceiveProps(nextProps){
-		axios.get('/api/japanese/'+nextProps.match.params.question, {
-			headers: {
-				Accept: 'application/json',
-				Authorization: 'Bearer '+localStorage.getItem('access_token')
-			}
-		})
-		.then((response) => {
-			if(response.status == 200){
-				this.setState({data: response.data});
-			}
-		})
-		.catch((error) => {
-			// Default data used to check if something changed.
-			this.setState({data: this.state.defaultData});
-			console.log(error.response);
-		});
-	}	
 
 	render(){
-		return (
-			<Question type={this.props.match.params.question} data={this.state.data} onChangeCallback={this.handleAnswer}/>
-		)
+		return <Question language={this.props.match.params.language} type={this.props.match.params.question}/>
 	}
 }
