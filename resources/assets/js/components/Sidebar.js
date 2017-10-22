@@ -6,7 +6,7 @@ import { Router, Route, NavLink } from 'react-router-dom';
 export default class Sidebar extends Component {
 	render(){
 		return (
-			<div className={'sidebar pt-3 px-0 bg-primary '+ this.props.className }> 
+			<div className={'sidebar pt-3 px-0 bg-primary '+ this.props.className }>
 				<div className='navbar-dark'>
 					<h4 className='navbar-brand p-3'>You (Can't) Learn Japanese</h4>
 					<nav className='nav navbar-nav navbar-toggleable nav-stacked flex-column'>
@@ -28,7 +28,7 @@ export default class Sidebar extends Component {
 						<li className='nav-item'>
 							<NavLink className='py-1 nav-link px-3 m-0' to={'/logout'}>Logout</NavLink>
 						</li>
-						
+
 					</nav>
 					{/*Insert study progress here?*/}
 				</div>

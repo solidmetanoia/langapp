@@ -12,7 +12,7 @@ export default class InputWithLabel extends Component {
 	}
 
 	handleInput(e){
-        this.props.onChangeCallback(e.target);            
+        this.props.onChangeCallback(e.target);
 	}
 
 	render(){

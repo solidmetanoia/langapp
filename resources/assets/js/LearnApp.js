@@ -49,7 +49,7 @@ const PreSelect = ({match}) => {
 class DisplayJapaneseQuestion extends Component {
 	constructor(props) {
 		super(props);
-	}	
+	}
 
 	render(){
 		return <Question language={this.props.match.params.language} type={this.props.match.params.question}/>

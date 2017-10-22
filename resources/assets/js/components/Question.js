@@ -1,7 +1,7 @@
 // Question.js
 
 import React, {Component} from 'react';
-	
+
 export default class Question extends Component {
 	constructor(props) {
 		super(props);
@@ -61,7 +61,7 @@ export default class Question extends Component {
 	handleKeyPress(e){
 		if (e.key === 'Enter') {
 			this.handleAnswer(e);
-		}   
+		}
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -69,7 +69,7 @@ export default class Question extends Component {
 		if(this.props != nextProps){
 			this.getNextItem(nextProps.language, nextProps.type);
 		}
-	}	
+	}
 
 	getNextItem(language = this.props.language, type = this.props.type){
 		axios.get('/api/'+language+'/'+type, {
