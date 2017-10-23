@@ -54,7 +54,7 @@ export default class Question extends Component {
 				}
 			})
 			.catch((error) => {
-				console.log(response);
+				console.log(error);
 			});
 	}
 
@@ -65,7 +65,6 @@ export default class Question extends Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-		console.log(nextProps);
 		if(this.props != nextProps){
 			this.getNextItem(nextProps.language, nextProps.type);
 		}
@@ -86,7 +85,7 @@ export default class Question extends Component {
 		.catch((error) => {
 			// Default data used to check if something changed.
 			this.setState({data: this.state.defaultData, correct: null});
-			console.log(error.response);
+			console.log(error);
 		});
 	}
 
@@ -95,8 +94,15 @@ export default class Question extends Component {
 			return <div className="text-center"><div className="h3">Loading...</div></div>
 		} else {
 			let data = this.state.data;
-			let example = null;
+			let example, information = null;
 			let cardFooter = [];
+
+			information = (
+				<div>
+					<hr/>
+					<div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
+				</div>
+			);
 
 			if(data.example != null){
 				example = <div className='h3 p-2'>{data.example}</div>;
@@ -131,14 +137,19 @@ export default class Question extends Component {
 							<div className='display-1'>{this.state.data.correct.word || "Word missing"}</div>
 							{example}
 							{this.state.correct != null &&
-								<div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
+								information
 							}
 						</div>
-						<div className='bg-secondary h2 p-2 m-0 flex-column flex-center flex-grow-1'>{this.state.data.correct.required || "meaning"}</div>
+						<div className='bg-secondary h2 p-2 m-0 flex-column flex-center flex-grow-1'>
+							{this.state.correct == null ?
+									(this.state.data.correct.required || "meaning"):
+								 	this.state.data.correct.meaning
+								}
+						</div>
 						<div className='flex-center bg-primary p-1'>
 							{cardFooter}
 						</div>
-						<div className='display-4 flex-center flex-column flex-grow-2'>
+						<div className='display-4 flex-center flex-column flex-grow-1'>
 							{this.state.data.correct.type || "Word type missing"}
 						</div>
 					</div>

@@ -25,6 +25,8 @@ export default class Login extends Component {
 			.then((response) => {
 				if(response.status == 200){
 					localStorage.setItem('access_token', JSON.parse(response.data).access_token);
+					localStorage.setItem('expires_in',  Date.now()+JSON.parse(response.data).expires_in*1000);
+					
 					this.props.history.push("/learn");
 				}
 			})
@@ -49,7 +51,7 @@ export default class Login extends Component {
 			{ name: 'username', label: 'Username:', placeholder: 'dekinai-kun', type: 'text' },
 			{ name: 'password', label: 'Password:', placeholder: '助けて', type: 'password' }
 		];
-		
+
 		return (
 			<div className='bg-success text-light app d-flex flex-column align-content-center justify-content-center'>
 				<div className='container'>

@@ -21,17 +21,17 @@ export default class PageNotFound extends Component {
 
 		var style = {
 			background: 'url('+canvas.toDataURL('image/png')+') repeat',
-			WebkitTransition: 'all', // note the capital 'W' here
-			msTransition: 'all' // 'ms' is the only lowercase vendor prefix
+			WebkitTransition: 'all',
+			msTransition: 'all'
 		}
 		return (
-			<div className="app bg-secondary d-flex flex-column justify-content-center text-light text-center " style={style}>
+			<div className="app bg-secondary d-flex flex-column justify-content-center text-light text-center" style={style}>
 				<div className="d-flex text-light">
 					<div className="flex-grow-1"><NavLink to={'/'}><div className="h2 bg-light text-dark">HOME</div></NavLink></div>
 					<div className='flex-grow-1 display-1 bg-warning'>出来ない</div>
 					<div className="flex-grow-1"><NavLink to={'/learn'}><div className="h2 bg-light text-dark">LEARN</div></NavLink></div>
 				</div>
 			</div>
-		)	
+		)
 	}
 }
