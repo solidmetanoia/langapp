@@ -22,7 +22,10 @@ export default class ProtectedRoute extends Component {
 
 				// If X seconds * 1000 left until losing auth,
 				// refresh as to not lose it.
-				if(expires-30*1000 < Date.now() && !cfg.url.startsWith('/login')){
+				if(	expires-30*1000 < Date.now() &&
+						!cfg.url.startsWith('/login') &&
+						!cfg.url.startsWith('/api/me')
+					){
 					console.log('Refreshing token');
 					await axios.post('/login/refresh', {})
 						.then((response) => {
@@ -51,8 +54,21 @@ export default class ProtectedRoute extends Component {
 	}
 
 	onIdle(){
-		localStorage.clear();
-		this.setState({logout: true})
+		var self = this;
+		axios.get('/api/me', {
+			headers: {
+				Accept: 'application/json',
+				Authorization: 'Bearer '+localStorage.getItem('access_token')
+			}
+		})
+		.then((response) => {
+			localStorage.setItem('user', JSON.stringify(response.data));
+		})
+		.catch((error) => {
+			localStorage.clear();
+			self.setState({loading: false, logout: true})
+		});
+		this.refs.idleTimer.reset();
 	}
 
 	componentDidMount() {
@@ -70,7 +86,6 @@ export default class ProtectedRoute extends Component {
 		.catch((error) => {
 			self.setState({loading: false});
 		});
-
 	}
 
 	render(){
@@ -83,9 +98,9 @@ export default class ProtectedRoute extends Component {
 				} else
 				return (
 					<IdleTimer
+						ref="idleTimer"
 						idleAction={this.onIdle}
-						// timeout={5000} // for test purposes 5 seconds
-						timeout={1000*60*10} // 10 minutes
+						timeout={10*1000} // check every X*1000 seconds while idle
 						>
 						<Route path={this.props.path} component={this.props.component}/>
 					</IdleTimer>

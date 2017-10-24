@@ -29,12 +29,21 @@ class StudyController extends Controller
 
 		// Eventually replace 'card' with 'word' maybe
 
+		$progress = DB::table('study_progress_core')
+			->where([
+				'user_id' => \Auth::id(),
+				'updated_at' => null
+			])
+			->orderBy('item_id', 'asc')
+			->get();
+
+		if(!$progress->first()){
 		// Get <step> items from <study progress> where <authorized user's ID>
 		$progress = DB::table('study_progress_core')
 			->where('user_id', \Auth::id())
 			// ->where('item_id', '!=', $item_id)
 			->orderBy('study_rate', 'asc')
-			->orderBy('updated_at', 'asc')
+			// ->orderBy('updated_at', 'asc')
 			->orderBy('item_id', 'asc')
 			->take($this->step)
 			->get();
@@ -73,7 +82,7 @@ class StudyController extends Controller
 					$final_id = $last_possible_id->id;
 
 			$items_to_add = [];
-			for ($id = $next_study_id; $id < $final_id; $id++) { 
+			for ($id = $next_study_id; $id < $final_id; $id++) {
 				$items_to_add[] = [
 					'item_id' => $id,
 					'user_id' => \Auth::id(),
@@ -93,7 +102,10 @@ class StudyController extends Controller
 				// ->orderBy('created_at', 'asc')
 				->take($this->step)
 				->get();
-		} 
+		} else {
+			$progress = $progress->where('study_rate', '<', $progress->first()->study_rate+$this->step);
+		}
+	}
 
 		// If card has not been updated
 		if($progress->first()->updated_at != NULL)
@@ -135,11 +147,23 @@ class StudyController extends Controller
 		// If false reduce points by 5% percent
 
 		$data = $request->all();
-		$correct = DB::table('core_6k_list')
+		$question = DB::table('core_6k_list')
 			->where([
 				'id' => $data['question'],
-				'meaning' => $data['answer'] // later should be not static meaning but received
+				// 'meaning' => $data['answer'] // later should be not static meaning but received
 			])->first();
+
+		$correct = false;
+		if($data['type'] != 'button'){
+			$data['answer'] = preg_replace('/\((.*?)\)/', '$1', $data['answer']);
+			$answers = explode(', ', preg_replace('/\((.*?)\)/', '$1', $question->meaning));
+			if(in_array($data['answer'], $answers))
+				$correct = true;
+		} else {
+			if($data['answer'] == $question->meaning)
+				$correct = true;
+		}
+
 		$progress = DB::table('study_progress_core')
 			->where([
 				'user_id' => \Auth::id(),
@@ -155,7 +179,7 @@ class StudyController extends Controller
 				])
 				->update([
 					'streak' => $progress->streak + 1,
-					'study_rate' => $progress->study_rate + 1 + $progress->streak * .25,
+					'study_rate' => $progress->study_rate + 1 + (($progress->streak >= 1) ? log($progress->streak) : 0),
 					'updated_at' => Carbon::now()
 				]);
 			$output['status'] = 'success';

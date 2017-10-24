@@ -33,7 +33,8 @@ export default class Question extends Component {
 	handleAnswer(data){
 		let output = {
 			question: this.state.data.correct.id,
-			answer: data.target.value
+			answer: data.target.value,
+			type: this.state.data.answer_type
 		};
 
 		axios.post('/api/'+this.props.language+'/'+this.props.type, output, {
