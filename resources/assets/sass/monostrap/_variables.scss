@@ -111,9 +111,10 @@ $bck-theme-colors: (
 ) !default;
 
 // Set main color
-$main: hsl(211, 39%, 43%); 
-// $main: hsl(359, 60%, 77%); //Redish
-// $main: hsl(120, 60%, 77%); //Greenish
+// $main: #ffab00;
+$main: hsl(211, 39%, 43%);
+// $main: hsl(359, 39%, 43%); //Redish
+// $main: hsl(120, 39%, 43%); //Greenish
 // $main: hsl(211, 39%, 43%); // Blueish
 
 // Set a specific jump point for requesting color jumps

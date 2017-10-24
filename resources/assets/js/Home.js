@@ -20,8 +20,7 @@ export default class Home extends Component {
 						so I started making this thing.<br/>
 					</div>
 					<div>
-						It started off as a Japanese language learning thing for vocab
-						, but it might expand as learning needs increase.
+						It started off as a Japanese language learning thing for vocab, but it might expand as learning needs increase.
 					</div>
 				</div>
 			</div>
