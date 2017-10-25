@@ -22,9 +22,10 @@ export default class ProtectedRoute extends Component {
 
 				// If X seconds * 1000 left until losing auth,
 				// refresh as to not lose it.
-				if(	expires-30*1000 < Date.now() &&
-						!cfg.url.startsWith('/login') &&
-						!cfg.url.startsWith('/api/me')
+				if(	expires-30*1000 < Date.now()
+						&& !cfg.url.startsWith('/logout')
+						&& !cfg.url.startsWith('/login')
+						&& !cfg.url.startsWith('/api/me')
 					){
 					console.log('Refreshing token');
 					await axios.post('/login/refresh', {})
@@ -45,9 +46,9 @@ export default class ProtectedRoute extends Component {
 				return cfg ;
 			}
 			, function (error) {
-		    // Do something with request error
-		    return Promise.reject(error);
-		  }
+				// Do something with request error
+				return Promise.reject(error);
+			}
 		);
 
 		this.onIdle = this.onIdle.bind(this);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use DB;
 
 class UserController extends Controller
 {
@@ -16,7 +17,16 @@ class UserController extends Controller
     }
 
     public function me(){
-    	return response()->json(\Auth::user(), 200);
+      $core['seen'] = DB::table('study_progress_core')
+                ->where('user_id', \Auth::id())->count();
+      $core['total'] = DB::table('core_6k_list')->count();
+      $data = [
+        'user' => \Auth::user(),
+        'progress' => [
+          'core' => $core
+        ]
+      ];
+    	return response()->json($data, 200);
     }
 
     // Requires:

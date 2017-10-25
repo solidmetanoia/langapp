@@ -1,10 +1,12 @@
 // Question.js
 
 import React, {Component} from 'react';
+import wanakana, {bind, toHiragana} from 'wanakana';
 
 export default class Question extends Component {
 	constructor(props) {
 		super(props);
+		this.wanaField = {};
 
 		this.state = {
 			data: null,
@@ -27,14 +29,15 @@ export default class Question extends Component {
 		this.getNextItem(this.props.language, this.props.type);
 
 		this.handleAnswer = this.handleAnswer.bind(this);
-		this.handleKeyPress = this.handleKeyPress.bind(this);
+		this.handleKeyDown = this.handleKeyDown.bind(this);
 	}
 
 	handleAnswer(data){
 		let output = {
 			question: this.state.data.correct.id,
+			type: this.state.data.answer_type,
+			required: this.state.data.required,
 			answer: data.target.value,
-			type: this.state.data.answer_type
 		};
 
 		axios.post('/api/'+this.props.language+'/'+this.props.type, output, {
@@ -44,7 +47,6 @@ export default class Question extends Component {
 				}
 			})
 			.then((response) => {
-				console.log(response);
 				if(response.status == 200){
 					// Load new card
 					if(response.data.status == 'success')
@@ -59,8 +61,10 @@ export default class Question extends Component {
 			});
 	}
 
-	handleKeyPress(e){
-		if (e.key === 'Enter') {
+	handleKeyDown(e){
+		if (e.keyCode === 13) {
+			if(this.state.data.required == 'reading')
+				e.target.value = toHiragana(e.target.value);
 			this.handleAnswer(e);
 		}
 	}
@@ -123,11 +127,16 @@ export default class Question extends Component {
 					case 'text':
 					case 'input':
 					default:
-						cardFooter = <input type='text' key={34} onKeyPress={this.handleKeyPress} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+						if(this.state.data.required == 'reading'){
+							cardFooter = <input type='text' autoFocus key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+						}
+						else{
+							cardFooter = <input type='text' autoFocus key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+						}
 						break;
 				}
 			} else {
-				cardFooter = <input type='button' key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn border-primary flex-1 text-center text-white rounded-0'}></input>
+				cardFooter = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn border-primary flex-1 text-center text-white rounded-0'}></input>
 			}
 
 			return (
@@ -143,9 +152,9 @@ export default class Question extends Component {
 						</div>
 						<div className='bg-secondary h2 p-2 m-0 flex-column flex-center flex-grow-1'>
 							{this.state.correct == null ?
-									(this.state.data.correct.required || "meaning"):
-								 	this.state.data.correct.meaning
-								}
+								(this.state.data.required || "Answer type missing"):
+								 this.state.data.correct.meaning
+							}
 						</div>
 						<div className='flex-center bg-primary p-1'>
 							{cardFooter}

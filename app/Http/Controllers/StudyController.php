@@ -38,74 +38,72 @@ class StudyController extends Controller
 			->get();
 
 		if(!$progress->first()){
-		// Get <step> items from <study progress> where <authorized user's ID>
-		$progress = DB::table('study_progress_core')
-			->where('user_id', \Auth::id())
-			// ->where('item_id', '!=', $item_id)
-			->orderBy('study_rate', 'asc')
-			// ->orderBy('updated_at', 'asc')
-			->orderBy('item_id', 'asc')
-			->take($this->step)
-			->get();
-
-		// Check if new cards should be added
-		$add_new = false;
-
-		// Check progress
-		// If empty, add cards.
-		if(!$progress->first())
-			$add_new = true;
-
-		// if study rate is far enough from initial
-		// but need to account for time as well.
-		// cards that haven't been seen in a while need to be counted as having a lower study_rate.
-		// daily study_rate reduction?
-		// current_study_rate = study_rate - 1*last_updated?
-		// temporarily static distance bool
-		if($progress->first())
-			if($progress->first()->study_rate > $this->base_study_rate+10)
-				$add_new = true;
-
-		// return response()->json($add_new, 200);
-
-		if($add_new){
-			DB::beginTransaction();
-			$last_possible_id = DB::table('core_6k_list')->orderBy('id', 'desc')->first();
-			$last_study_id = DB::table('study_progress_core')
-					->where('user_id', \Auth::id())
-					->orderBy('item_id', 'desc')->first();
-			$next_study_id = ($last_study_id)?$last_study_id->item_id + 1:1;
-			$final_id = $next_study_id + $this->step;
-			// If there are less cards available than the step exists
-			if($last_study_id)
-				if($last_possible_id->id - $next_study_id < $this->step)
-					$final_id = $last_possible_id->id;
-
-			$items_to_add = [];
-			for ($id = $next_study_id; $id < $final_id; $id++) {
-				$items_to_add[] = [
-					'item_id' => $id,
-					'user_id' => \Auth::id(),
-					'study_rate' => $this->base_study_rate,
-					'streak' => 0
-				];
-			}
-
-			DB::table('study_progress_core')->insert($items_to_add);
-			DB::commit();
-
-			// Re-retrieve after inserting
+			// Get <step> items from <study progress> where <authorized user's ID>
 			$progress = DB::table('study_progress_core')
 				->where('user_id', \Auth::id())
 				// ->where('item_id', '!=', $item_id)
 				->orderBy('study_rate', 'asc')
-				// ->orderBy('created_at', 'asc')
+				// ->orderBy('updated_at', 'asc')
+				->orderBy('item_id', 'asc')
 				->take($this->step)
 				->get();
-		} else {
-			$progress = $progress->where('study_rate', '<', $progress->first()->study_rate+$this->step);
+
+			// Check if new cards should be added
+			$add_new = false;
+
+			// Check progress
+			// If empty, add cards.
+			if(!$progress->first())
+				$add_new = true;
+
+			// if study rate is far enough from initial
+			// but need to account for time as well.
+			// cards that haven't been seen in a while need to be counted as having a lower study_rate.
+			// daily study_rate reduction?
+			// current_study_rate = study_rate - 1*last_updated?
+			// temporarily static distance bool
+			if($progress->first())
+				if($progress->first()->study_rate > $this->base_study_rate+10)
+					$add_new = true;
+
+			if($add_new){
+				DB::beginTransaction();
+				$last_possible_id = DB::table('core_6k_list')->orderBy('id', 'desc')->first();
+				$last_study_id = DB::table('study_progress_core')
+						->where('user_id', \Auth::id())
+						->orderBy('item_id', 'desc')->first();
+				$next_study_id = ($last_study_id)?$last_study_id->item_id + 1:1;
+				$final_id = $next_study_id + $this->step;
+				// If there are less cards available than the step exists
+				if($last_study_id)
+					if($last_possible_id->id - $next_study_id < $this->step)
+						$final_id = $last_possible_id->id;
+
+				$items_to_add = [];
+				for ($id = $next_study_id; $id < $final_id; $id++) {
+					$items_to_add[] = [
+						'item_id' => $id,
+						'user_id' => \Auth::id(),
+						'study_rate' => $this->base_study_rate,
+						'streak' => 0
+					];
+				}
+
+				DB::table('study_progress_core')->insert($items_to_add);
+				DB::commit();
+
+				// Re-retrieve after inserting
+				$progress = DB::table('study_progress_core')
+					->where('user_id', \Auth::id())
+					// ->where('item_id', '!=', $item_id)
+					->orderBy('study_rate', 'asc')
+					// ->orderBy('created_at', 'asc')
+					->take($this->step)
+					->get();
+			} else {
+				$progress = $progress->where('study_rate', '<', $progress->first()->study_rate+$this->step);
+			}
 		}
-	}
 
 		// If card has not been updated
 		if($progress->first()->updated_at != NULL)
@@ -116,12 +114,14 @@ class StudyController extends Controller
 			->select('study_progress_core.study_rate', 'core_6k_list.*')->first();
 
 		$data['correct'] = $card;
-
-
+		$data['required'] = 'meaning';
 
 		// After X correct answers use text input
 		if($data['correct']->study_rate > 30) {
 			$data['answer_type'] = 'input';
+			$random = mt_rand(0, 1);
+			if(($data['correct']->study_rate) - $random*100 > 50)
+				$data['required'] = 'reading';
 		} else {
 			$data['answer_type'] = 'button';
 			$answers = DB::table('study_progress_core')
@@ -156,7 +156,7 @@ class StudyController extends Controller
 		$correct = false;
 		if($data['type'] != 'button'){
 			$data['answer'] = preg_replace('/\((.*?)\)/', '$1', $data['answer']);
-			$answers = explode(', ', preg_replace('/\((.*?)\)/', '$1', $question->meaning));
+			$answers = explode(', ', preg_replace('/\((.*?)\)/', '$1', $question->{$data['required']}));
 			if(in_array($data['answer'], $answers))
 				$correct = true;
 		} else {
