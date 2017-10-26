@@ -1,5 +1,5 @@
 .sidebar{
-	
+
 	min-width: 220px;
 
 	nav {
@@ -35,7 +35,7 @@
 			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
 		}
 	}
-	
+
 }
 
 .app {
@@ -57,8 +57,14 @@
 
 .error {
 	position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translate(-50%, -10%);
-    padding: 20px;
+	bottom: 10%;
+	left: 50%;
+	transform: translate(-50%, -10%);
+	padding: 20px;
+}
+
+.fixed-top-left {
+	position: fixed;
+	top: 10%;
+	left: 10%;
 }

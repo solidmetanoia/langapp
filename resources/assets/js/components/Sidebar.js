@@ -8,7 +8,7 @@ export default class Sidebar extends Component {
 		return (
 			<div className={'sidebar pt-3 px-0 bg-primary '+ this.props.className }>
 				<div className='navbar-dark'>
-					<h4 className='navbar-brand p-3'>You (Can't) Learn Japanese</h4>
+					<h4 className='navbar-brand p-3'>You (Can't)<br/>Learn Japanese</h4>
 					<nav className='nav navbar-nav navbar-toggleable nav-stacked flex-column'>
 						<li className='nav-item'>
 							<NavLink className='py-1 nav-link px-3 m-0' exact to={'/'}>Home</NavLink>

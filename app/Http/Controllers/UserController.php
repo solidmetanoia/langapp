@@ -18,7 +18,10 @@ class UserController extends Controller
 
     public function me(){
       $core['seen'] = DB::table('study_progress_core')
-                ->where('user_id', \Auth::id())->count();
+                ->where([
+                    ['user_id', '=', \Auth::id()],
+                    ['updated_at', '!=', null]
+                  ])->count();
       $core['total'] = DB::table('core_6k_list')->count();
       $data = [
         'user' => \Auth::user(),

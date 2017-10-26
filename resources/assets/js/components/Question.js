@@ -69,6 +69,27 @@ export default class Question extends Component {
 		}
 	}
 
+	quickButton(e){
+		if(e.keyCode >= 49 && e.keyCode <= 54) {
+			let buttons = {
+				49: 0,
+				50: 1,
+				51: 2,
+				52: 3,
+				53: 4,
+				54: 5
+			};
+			document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
+		}
+	}
+
+	componentDidMount(){
+		document.addEventListener("keydown", this.quickButton, false);
+	}
+	componentWillUnmount(){
+		document.removeEventListener("keydown", this.quickButton, false);
+	}
+
 	componentWillReceiveProps(nextProps){
 		if(this.props != nextProps){
 			this.getNextItem(nextProps.language, nextProps.type);
@@ -99,13 +120,28 @@ export default class Question extends Component {
 			return <div className="text-center"><div className="h3">Loading...</div></div>
 		} else {
 			let data = this.state.data;
-			let example, information = null;
+			let example, information, required, required_color = null;
 			let cardFooter = [];
 
 			information = (
 				<div>
 					<hr/>
 					<div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
+				</div>
+			);
+
+			switch (this.state.data.required) {
+				case 'meaning': required_color = 'bg-secondary'; break;
+				case 'reading': required_color = 'bg-primary text-white'; break;
+				default: required_color = 'bg-warning'; break;
+			}
+
+			required = (
+				<div className={required_color +' h2 p-2 m-0 flex-column flex-center flex-grow-1'}>
+					{this.state.correct == null ?
+						(this.state.data.required || "Answer type missing"):
+						 this.state.data.correct.meaning
+					}
 				</div>
 			);
 
@@ -150,12 +186,7 @@ export default class Question extends Component {
 								information
 							}
 						</div>
-						<div className='bg-secondary h2 p-2 m-0 flex-column flex-center flex-grow-1'>
-							{this.state.correct == null ?
-								(this.state.data.required || "Answer type missing"):
-								 this.state.data.correct.meaning
-							}
-						</div>
+						{required}
 						<div className='flex-center bg-primary p-1'>
 							{cardFooter}
 						</div>

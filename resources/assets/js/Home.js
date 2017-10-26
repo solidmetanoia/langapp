@@ -8,7 +8,7 @@ export default class Home extends Component {
 	render(){
 		return (
 			<div>
-				<Header/>
+				<Header className="header"/>
 				<div className="container">
 					<div className="text-center display-3">piercer's langapp</div>
 					<div className="py-5">

@@ -2,7 +2,7 @@ require('./bootstrap');
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Home from './Home';
 import LearnApp from './LearnApp';
@@ -20,6 +20,11 @@ ReactDOM.render((
 			<Route exact path='/logout' component={Logout}/>
 			<Route exact path='/register' component={Register}/>
 			<ProtectedRoute path='/learn' component={LearnApp}/>
+
+			{/* For Cordova */}
+			<Route exact path='/index.html'>
+				<Redirect to='/' push/>
+			</Route>
 			<Route component={PageNotFound} />
 		</Switch>
 	</BrowserRouter>

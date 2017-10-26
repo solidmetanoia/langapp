@@ -65,6 +65,7 @@ export default class Login extends Component {
 								<NavLink className='btn btn-secondary flex-grow-1' to={'/register'}>I'm a new user</NavLink>
 							</div>
 						</div>
+						<NavLink to={'/'} className="text-white fixed-top-left btn btn-link btn-lg">←Home</NavLink>
 					</form>
 					{(this.state.errors) &&
 						<div className='bg-warning text-white text-center rounded error'>{this.state.errors}</div>

@@ -62,6 +62,7 @@ export default class Register extends Component {
 							<button type='submit' onClick={this.submitRegister} className='btn btn-primary flex-grow-2'>Create Account</button>
 						</div>
 					</div>
+					<NavLink to={'/'} className="text-white fixed-top-left btn btn-link btn-lg">←Home</NavLink>
 				</form>
 				{(this.state.errors) &&
 					<div className='bg-warning text-white text-center rounded error'>{this.state.errors}</div>
