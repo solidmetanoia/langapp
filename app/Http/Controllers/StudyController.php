@@ -113,15 +113,24 @@ class StudyController extends Controller
 			->join('core_6k_list', 'core_6k_list.id', '=', 'study_progress_core.item_id')
 			->select('study_progress_core.study_rate', 'core_6k_list.*')->first();
 
+		// if study rate high enough to remove furigana from seeking word
+		// $card->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
+
+		// if study rate high enough to remove furigana from sentence
+		// $card->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
+
 		$data['correct'] = $card;
 		$data['required'] = 'meaning';
 
 		// After X correct answers use text input
 		if($data['correct']->study_rate > 30) {
 			$data['answer_type'] = 'input';
+			$data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
 			$random = mt_rand(0, 1);
-			if(($data['correct']->study_rate) - $random*100 > 50)
+			if(($data['correct']->study_rate) - $random*100 > 50){
+				$data['correct']->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
 				$data['required'] = 'reading';
+			}
 		} else {
 			$data['answer_type'] = 'button';
 			$answers = DB::table('study_progress_core')

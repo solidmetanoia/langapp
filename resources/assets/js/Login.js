@@ -21,17 +21,20 @@ export default class Login extends Component {
 
 	submitLogin(e){
 		e.preventDefault();
-		axios.post('/login', this.state)
+		e.persist();
+		e.target.disabled = true;
+		axios.post('login', this.state)
 			.then((response) => {
 				if(response.status == 200){
 					localStorage.setItem('access_token', JSON.parse(response.data).access_token);
 					localStorage.setItem('expires_in',  Date.now()+JSON.parse(response.data).expires_in*1000);
-					
+
 					this.props.history.push("/learn");
 				}
 			})
 			.catch((error) => {
 				// Set up fail state here.
+				e.target.disabled = false;
 				var output = Object.keys(error.response.data).map((key) => {
 					return [<div>{error.response.data[key]}</div>];
 				});

@@ -26,10 +26,12 @@ export default class PageNotFound extends Component {
 		}
 		return (
 			<div className="app bg-secondary d-flex flex-column justify-content-center text-light text-center" style={style}>
-				<div className="d-flex text-light">
-					<div className="flex-grow-1"><NavLink to={'/'}><div className="h2 bg-light text-dark">HOME</div></NavLink></div>
-					<div className='flex-grow-1 display-1 bg-warning'>出来ない</div>
-					<div className="flex-grow-1"><NavLink to={'/learn'}><div className="h2 bg-light text-dark">LEARN</div></NavLink></div>
+				<div className="d-flex flex-column flex-1 text-light">
+					<NavLink to={'/'}><div className="display-4 bg-light text-dark">HOME</div></NavLink>
+				</div>
+					<div className='display-3 bg-warning'>出来ない</div>
+				<div className="d-flex flex-column flex-1 text-light justify-content-end">
+					<NavLink to={'/learn'}><div className="display-4 bg-light text-dark">LEARN</div></NavLink>
 				</div>
 			</div>
 		)

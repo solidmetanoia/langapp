@@ -32,13 +32,15 @@ export default class Question extends Component {
 		this.handleKeyDown = this.handleKeyDown.bind(this);
 	}
 
-	handleAnswer(data){
+	handleAnswer(e){
 		let output = {
 			question: this.state.data.correct.id,
 			type: this.state.data.answer_type,
 			required: this.state.data.required,
-			answer: data.target.value,
+			answer: e.target.value,
 		};
+		e.persist();
+		e.target.disabled = true;
 
 		axios.post('/api/'+this.props.language+'/'+this.props.type, output, {
 				headers: {
