@@ -85,7 +85,8 @@ class StudyController extends Controller
 						'item_id' => $id,
 						'user_id' => \Auth::id(),
 						'study_rate' => $this->base_study_rate,
-						'streak' => 0
+						'streak' => 0,
+						'created_at' => Carbon::now(),
 					];
 				}
 

@@ -158,9 +158,19 @@ export default class Question extends Component {
 			if(this.state.correct == null){
 				switch(data.answer_type){
 					case 'button':
-						data.answers.map((answer, index)=>{
-							cardFooter.push(<input type='button' key={index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary flex-1 text-center text-light rounded-0'></input>);
-						});
+						cardFooter =
+						<div>
+							<div className='d-none d-md-flex flex-center bg-primary p-1'>
+								{data.answers.map((answer, index)=>{
+									return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
+								})}
+							</div>
+							<div className='d-sm-block d-md-none bg-primary p-1'>
+								{data.answers.map((answer, index)=>{
+									return <input type='button' key={200+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary text-center text-light rounded-0 col-4'></input>;
+								})}
+							</div>
+						</div>;
 						break;
 					case 'text':
 					case 'input':
@@ -189,9 +199,7 @@ export default class Question extends Component {
 							}
 						</div>
 						{required}
-						<div className='flex-center bg-primary p-1'>
-							{cardFooter}
-						</div>
+						{cardFooter}
 						<div className='display-4 flex-center flex-column flex-grow-1'>
 							{this.state.data.correct.type || "Word type missing"}
 						</div>

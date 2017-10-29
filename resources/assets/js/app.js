@@ -12,7 +12,7 @@ import Register from './Register';
 import ProtectedRoute from './components/ProtectedRoute';
 import PageNotFound from './components/PageNotFound';
 
-// Static IP for Cordova
+// Static IP for Cordova (example IP)
 // axios.defaults.baseURL = 'http://192.168.179.17/';
 
 ReactDOM.render((

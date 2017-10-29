@@ -16,9 +16,8 @@ export default class ProtectedRoute extends Component {
 		axios.interceptors.request.use(async function (config) {
 				let cfg = config;
 				let expires = localStorage.getItem('expires_in');
-				if(expires === null || expires.length === 0){
-					expires = 0;
-				}
+				if(expires === null || expires.length === 0)
+					return cfg;
 
 				// If X seconds * 1000 left until losing auth,
 				// refresh as to not lose it.
