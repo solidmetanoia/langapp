@@ -11,6 +11,15 @@
 |
 */
 
+Route::post('/login', function () {
+    return view('index');
+})->name('login');
+
+Route::post('/login', 'Auth\LoginController@login');
+Route::post('/login/refresh', 'Auth\LoginController@refresh');
+
+Route::post('/register', 'Auth\RegisterController@register');
+
 Route::get('/{path?}', function () {
-    return view('welcome');
+    return view('index');
 })->where('path', '.*');
