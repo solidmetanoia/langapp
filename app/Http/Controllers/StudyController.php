@@ -167,7 +167,8 @@ class StudyController extends Controller
 		if($data['type'] != 'button'){
 			$data['answer'] = preg_replace('/\((.*?)\)/', '$1', $data['answer']);
 			$answers = explode(', ', preg_replace('/\((.*?)\)/', '$1', $question->{$data['required']}));
-			if(in_array($data['answer'], $answers))
+			$answers = array_combine(array_map('strtolower', $answers), $answers);
+			if(in_array(strtolower($data['answer']), $answers))
 				$correct = true;
 		} else {
 			if($data['answer'] == $question->meaning)
