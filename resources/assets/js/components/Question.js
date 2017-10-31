@@ -176,10 +176,10 @@ export default class Question extends Component {
 					case 'input':
 					default:
 						if(this.state.data.required == 'reading'){
-							cardFooter = <input type='text' autoFocus key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+							cardFooter = <input type='text' placeholder="・・・" autoFocus key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
 						}
 						else{
-							cardFooter = <input type='text' autoFocus key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+							cardFooter = <input type='text' placeholder="・・・" autoFocus key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
 						}
 						break;
 				}
@@ -189,7 +189,7 @@ export default class Question extends Component {
 
 			return (
 				<div className='d-flex flex-column text-center flex-grow-1 w-100'>
-					<div className='p-2 bg-secondary'><div className='h2'>{this.props.type}</div></div>
+					<div className='p-2 bg-secondary d-smh-none'><div className='h2'>{this.props.type}</div></div>
 					<div className='flex-center flex-column flex-grow-1'>
 						<div className='flex-center flex-column flex-grow-7'>
 							<div className='display-1'>{this.state.data.correct.word || "Word missing"}</div>
@@ -200,11 +200,11 @@ export default class Question extends Component {
 						</div>
 						{required}
 						{cardFooter}
-						<div className='display-4 flex-center flex-column flex-grow-1'>
+						<div className='display-4 flex-center flex-column flex-grow-1 d-smh-none'>
 							{this.state.data.correct.type || "Word type missing"}
 						</div>
 					</div>
-					<div className='p-2 bg-secondary'><div className='h2'>{this.props.type}</div></div>
+					<div className='p-2 bg-secondary d-smh-none'><div className='h2'>{this.props.type}</div></div>
 				</div>
 			)
 		}

@@ -42,6 +42,10 @@
 	position: absolute;
 	width: 100%;
 	height: 100%;
+
+	@media (max-height: 500px) {
+		.d-smh-none { display: none; }
+	}
 }
 
 .overflow-hidden { overflow: hidden; }
