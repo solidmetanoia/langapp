@@ -6,11 +6,11 @@ import wanakana, {bind, toHiragana} from 'wanakana';
 export default class Question extends Component {
 	constructor(props) {
 		super(props);
-		this.wanaField = {};
 
 		this.state = {
 			data: null,
 			correct: null,
+			answer: null,
 			defaultData: {
 				"correct": {
 					"word": "TEST",
@@ -39,6 +39,7 @@ export default class Question extends Component {
 			required: this.state.data.required,
 			answer: e.target.value,
 		};
+		this.setState({answered: e.target.value});
 		e.persist();
 		e.target.disabled = true;
 
@@ -79,7 +80,10 @@ export default class Question extends Component {
 				51: 2,
 				52: 3,
 				53: 4,
-				54: 5
+				54: 5,
+				81: 3,
+				87: 4,
+				69: 5
 			};
 			document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
 		}
@@ -107,7 +111,7 @@ export default class Question extends Component {
 		})
 		.then((response) => {
 			if(response.status == 200){
-				this.setState({data: response.data, correct: null});
+				this.setState({data: response.data, correct: null, answered: null});
 			}
 		})
 		.catch((error) => {
@@ -123,7 +127,7 @@ export default class Question extends Component {
 		} else {
 			let data = this.state.data;
 			let example, information, required, required_color = null;
-			let cardFooter = [];
+			let answerArea = [];
 
 			information = (
 				<div>
@@ -139,10 +143,10 @@ export default class Question extends Component {
 			}
 
 			required = (
-				<div className={required_color +' h2 p-2 m-0 flex-column flex-center flex-grow-1'}>
+				<div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
 					{this.state.correct == null ?
 						(this.state.data.required || "Answer type missing"):
-						 this.state.data.correct.meaning
+					 	this.state.data.correct.meaning
 					}
 				</div>
 			);
@@ -158,14 +162,14 @@ export default class Question extends Component {
 			if(this.state.correct == null){
 				switch(data.answer_type){
 					case 'button':
-						cardFooter =
+						answerArea =
 						<div>
-							<div className='d-none d-md-flex flex-center bg-primary p-1'>
+							<div className='d-none d-lg-flex flex-center bg-primary p-1'>
 								{data.answers.map((answer, index)=>{
 									return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
 								})}
 							</div>
-							<div className='d-sm-block d-md-none bg-primary p-1'>
+							<div className='d-md-block d-lg-none bg-primary p-1'>
 								{data.answers.map((answer, index)=>{
 									return <input type='button' key={200+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary text-center text-light rounded-0 col-4'></input>;
 								})}
@@ -176,35 +180,44 @@ export default class Question extends Component {
 					case 'input':
 					default:
 						if(this.state.data.required == 'reading'){
-							cardFooter = <input type='text' placeholder="・・・" autoFocus key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+							answerArea = <input type='text' autoFocus placeholder='・・・' key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center'></input>;
 						}
 						else{
-							cardFooter = <input type='text' placeholder="・・・" autoFocus key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg flex-1 bg-success text-light text-center'></input>;
+							answerArea = <input type='text' autoFocus placeholder='・・・' key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center'></input>;
 						}
 						break;
 				}
 			} else {
-				cardFooter = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn border-primary flex-1 text-center text-white rounded-0'}></input>
+				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn border-primary flex-1 text-center text-white rounded-0'}></input>
 			}
 
 			return (
 				<div className='d-flex flex-column text-center flex-grow-1 w-100'>
-					<div className='p-2 bg-secondary d-smh-none'><div className='h2'>{this.props.type}</div></div>
-					<div className='flex-center flex-column flex-grow-1'>
+					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center'>{this.props.type}</div>
+					<div className='flex-center flex-column flex-grow-7'>
 						<div className='flex-center flex-column flex-grow-7'>
-							<div className='display-1'>{this.state.data.correct.word || "Word missing"}</div>
+							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{example}
 							{this.state.correct != null &&
 								information
 							}
 						</div>
-						{required}
-						{cardFooter}
-						<div className='display-4 flex-center flex-column flex-grow-1 d-smh-none'>
-							{this.state.data.correct.type || "Word type missing"}
+						<div className='h4 m-0 d-flex flex-column'>
+							{answerArea}
+							<div className='d-flex flex-row flex-all-even'>
+								<div className='flex-center flex-column'>
+									{this.state.data.correct.type || "Word type missing"}
+								</div>
+								{required}
+								<div className={(this.state.correct == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>
+									{this.state.correct == false ? <s>{this.state.answered}</s> : null}
+								</div>
+							</div>
 						</div>
 					</div>
-					<div className='p-2 bg-secondary d-smh-none'><div className='h2'>{this.props.type}</div></div>
+					<div className='bg-secondary d-smh-none flex-grow-1'>
+						{/* <div className='h2'>{this.props.type}</div> */}
+					</div>
 				</div>
 			)
 		}

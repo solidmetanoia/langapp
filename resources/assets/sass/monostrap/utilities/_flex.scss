@@ -54,3 +54,5 @@
 
 .flex-center { display: flex; justify-content: center; align-content: center;}
 .flex-1 {flex: 1}
+.flex-all-even {flex: 1}
+.flex-all-even > div {flex: 1; flex-grow: 1}

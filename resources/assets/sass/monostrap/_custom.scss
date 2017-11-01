@@ -72,3 +72,12 @@
 	top: 10%;
 	left: 10%;
 }
+
+// Placeholder color for dark backgrounds
+.bg-primary, .bg-secondary, .bg-warning, .bg-danger, .bg-success{
+	& .form-control::placeholder {
+		color: map-get($theme-colors, light);
+		// Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526.
+		opacity: 1;
+	}
+}

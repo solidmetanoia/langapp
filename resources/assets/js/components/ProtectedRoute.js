@@ -81,7 +81,18 @@ export default class ProtectedRoute extends Component {
 			self.setState({allow: true, loading: false});
 		})
 		.catch((error) => {
-			self.setState({loading: false});
+			axios.post('/login/refresh', {})
+				.then((response) => {
+					if(response.status == 200){
+						localStorage.setItem('access_token', JSON.parse(response.data).access_token);
+						localStorage.setItem('expires_in',  Date.now()+JSON.parse(response.data).expires_in*1000);
+						self.setState({allow: true, loading: false});
+					}
+				})
+				.catch((error) => {
+					localStorage.clear();
+					self.setState({loading: false});
+				});
 		});
 	}
 
