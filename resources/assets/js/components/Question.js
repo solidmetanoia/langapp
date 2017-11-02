@@ -30,6 +30,7 @@ export default class Question extends Component {
 
 		this.handleAnswer = this.handleAnswer.bind(this);
 		this.handleKeyDown = this.handleKeyDown.bind(this);
+		this.quickButton = this.quickButton.bind(this);
 	}
 
 	handleAnswer(e){
@@ -73,19 +74,22 @@ export default class Question extends Component {
 	}
 
 	quickButton(e){
-		if(e.keyCode >= 49 && e.keyCode <= 54) {
-			let buttons = {
-				49: 0,
-				50: 1,
-				51: 2,
-				52: 3,
-				53: 4,
-				54: 5,
-				81: 3,
-				87: 4,
-				69: 5
-			};
-			document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
+		if(this.state.data.answer_type == 'button'){
+			if([49,50,51,52,53,54,81,87,69].includes(e.keyCode)) {
+				console.log(e);
+				let buttons = {
+					49: 0,
+					50: 1,
+					51: 2,
+					52: 3,
+					53: 4,
+					54: 5,
+					81: 3,
+					87: 4,
+					69: 5
+				};
+				document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
+			}
 		}
 	}
 
@@ -163,15 +167,15 @@ export default class Question extends Component {
 				switch(data.answer_type){
 					case 'button':
 						answerArea =
-						<div>
+						<div className="flex-1 flex-center flex-column flex-all-even">
 							<div className='d-none d-lg-flex flex-center bg-primary p-1'>
 								{data.answers.map((answer, index)=>{
-									return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
+									return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-lg btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
 								})}
 							</div>
 							<div className='d-md-block d-lg-none bg-primary p-1'>
 								{data.answers.map((answer, index)=>{
-									return <input type='button' key={200+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-success border-primary text-center text-light rounded-0 col-4'></input>;
+									return <input type='button' key={200+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-lg btn-success border-primary text-center text-light rounded-0 col-4'></input>;
 								})}
 							</div>
 						</div>;
@@ -180,38 +184,41 @@ export default class Question extends Component {
 					case 'input':
 					default:
 						if(this.state.data.required == 'reading'){
-							answerArea = <input type='text' autoFocus placeholder='・・・' key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center'></input>;
+							answerArea = <input type='text' autoFocus placeholder='・・・' key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center pm0 flex-grow-1 flex-center'></input>;
 						}
 						else{
-							answerArea = <input type='text' autoFocus placeholder='・・・' key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center'></input>;
+							answerArea = <input type='text' autoFocus placeholder='・・・' key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center pm0 flex-grow-1 flex-center'></input>;
 						}
 						break;
 				}
 			} else {
-				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn border-primary flex-1 text-center text-white rounded-0'}></input>
+				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
 			}
 
 			return (
 				<div className='d-flex flex-column text-center flex-grow-1 w-100'>
 					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center'>{this.props.type}</div>
 					<div className='flex-center flex-column flex-grow-7'>
-						<div className='flex-center flex-column flex-grow-7'>
+						<div className='flex-center flex-column flex-1'>
 							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
+							{this.state.correct != null &&
+								<div className='h3 pm0'>{this.state.data.correct.reading}</div>
+							}
 							{example}
 							{this.state.correct != null &&
 								information
 							}
 						</div>
-						<div className='h4 m-0 d-flex flex-column'>
-							{answerArea}
-							<div className='d-flex flex-row flex-all-even'>
-								<div className='flex-center flex-column'>
-									{this.state.data.correct.type || "Word type missing"}
-								</div>
-								{required}
-								<div className={(this.state.correct == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>
-									{this.state.correct == false ? <s>{this.state.answered}</s> : null}
-								</div>
+					</div>
+					<div className='h4 m-0 d-flex flex-column flex-grow-2 flex-basis-0'>
+						{answerArea}
+						<div className='d-flex flex-row flex-1 flex-all-even'>
+							<div className='flex-center flex-column'>
+								{this.state.data.correct.type || "Word type missing"}
+							</div>
+							{required}
+							<div className={(this.state.correct == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>
+								{this.state.correct == false ? <s>{this.state.answered}</s> : null}
 							</div>
 						</div>
 					</div>

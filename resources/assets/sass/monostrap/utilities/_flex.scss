@@ -47,12 +47,12 @@
   @include media-breakpoint-up($breakpoint) {
     @for $size from 1 through 8 {
       $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
-      .flex-grow#{$infix}-#{$size} { flex-grow: $size; }
+      .flex-grow#{$infix}-#{$size} { flex-grow: $size;}
     }
   }
 }
 
-.flex-center { display: flex; justify-content: center; align-content: center;}
+.flex-center { display: flex; justify-content: center; align-content: center; flex-basis: 0%;}
+.flex-basis-0 {flex-basis: 0%}
 .flex-1 {flex: 1}
-.flex-all-even {flex: 1}
-.flex-all-even > div {flex: 1; flex-grow: 1}
+.flex-all-even, .flex-all-even > div {flex-grow: 1}

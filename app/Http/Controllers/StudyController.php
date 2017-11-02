@@ -124,11 +124,11 @@ class StudyController extends Controller
 		$data['required'] = 'meaning';
 
 		// After X correct answers use text input
-		if($data['correct']->study_rate > 30) {
+		if($data['correct']->study_rate > 20 || isset($data['give_me_text'])) {
 			$data['answer_type'] = 'input';
 			$data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
 			$random = mt_rand(0, 1);
-			if(($data['correct']->study_rate) - $random*100 > 50){
+			if(($data['correct']->study_rate) - $random*100 > 40){
 				$data['correct']->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
 				$data['required'] = 'reading';
 			}
@@ -167,8 +167,8 @@ class StudyController extends Controller
 		if($data['type'] != 'button'){
 			$data['answer'] = preg_replace('/\((.*?)\)/', '$1', $data['answer']);
 			$answers = explode(', ', preg_replace('/\((.*?)\)/', '$1', $question->{$data['required']}));
-			$answers = array_combine(array_map('strtolower', $answers), $answers);
-			if(in_array(strtolower($data['answer']), $answers))
+			$answers = array_map('strtolower', $answers);
+			if(in_array(trim(strtolower($data['answer'])), $answers))
 				$correct = true;
 		} else {
 			if($data['answer'] == $question->meaning)
