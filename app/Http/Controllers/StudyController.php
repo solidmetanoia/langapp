@@ -165,11 +165,12 @@ class StudyController extends Controller
 
 		$correct = false;
 		if($data['type'] != 'button'){
-			$data['answer'] = preg_replace('/\((.*?)\)/', '$1', $data['answer']);
-			$answers = explode(', ', preg_replace('/\((.*?)\)/', '$1', $question->{$data['required']}));
-			$answers = array_map('strtolower', $answers);
-			if(in_array(trim(strtolower($data['answer'])), $answers))
+			$data['answer'] = trim(strtolower($data['answer']));
+			$answers = explode(', ', preg_replace('/\(.*?\)/', '', $question->{$data['required']}));
+			$answers = array_map('strtolower', array_map('trim', $answers));
+			if(in_array($data['answer'], $answers))
 				$correct = true;
+			// Should add check for string similarity?
 		} else {
 			if($data['answer'] == $question->meaning)
 				$correct = true;
