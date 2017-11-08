@@ -11,6 +11,7 @@ export default class Question extends Component {
 			data: null,
 			correct: null,
 			answer: null,
+			message: null,
 			defaultData: {
 				"correct": {
 					"word": "TEST",
@@ -40,7 +41,7 @@ export default class Question extends Component {
 			required: this.state.data.required,
 			answer: e.target.value,
 		};
-		this.setState({answered: e.target.value});
+		this.setState({answered: e.target.value, message: null});
 		e.persist();
 		e.target.disabled = true;
 
@@ -57,11 +58,16 @@ export default class Question extends Component {
 						this.setState({correct: true});
 					else if (response.data.status == 'fail')
 						this.setState({correct: false})
+					else if (response.data.status == 'context'){
+						this.setState({message: response.data.message})
+						e.target.disabled = false;
+					}
 					// this.getNextItem(this.props.language, this.props.type);
 				}
 			})
 			.catch((error) => {
 				console.log(error);
+				e.target.disabled = false;
 			});
 	}
 
@@ -222,8 +228,8 @@ export default class Question extends Component {
 							</div>
 						</div>
 					</div>
-					<div className='bg-secondary d-smh-none flex-grow-1'>
-						{/* <div className='h2'>{this.props.type}</div> */}
+					<div className='bg-secondary d-smh-none flex-grow-1 h2 p-2 m-0 flex-column flex-center'>
+						{this.state.message}
 					</div>
 				</div>
 			)
