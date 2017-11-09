@@ -8,6 +8,7 @@ export default class Home extends Component {
 	render(){
 		return (
 			<div>
+				{ (document.getElementById('android-theme-color'))?document.getElementById('android-theme-color').setAttribute('content', '#444'):''}
 				<Header className="header"/>
 				<div className="container">
 					<div className="text-center display-3">piercer's langapp</div>

@@ -110,7 +110,9 @@ export default class ProtectedRoute extends Component {
 						idleAction={this.onIdle}
 						timeout={10*1000} // check every X*1000 seconds while idle
 						>
-						<Route path={this.props.path} component={this.props.component}/>
+						<Route path={this.props.path} component={this.props.component}>
+							{ (document.getElementById('android-theme-color'))?document.getElementById('android-theme-color').setAttribute('content', '#4B5D7E'):''}
+						</Route>
 					</IdleTimer>
 				)
 			else
