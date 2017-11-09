@@ -196,9 +196,9 @@ export default class Question extends Component {
 			}
 
 			return (
-				<div className='d-flex flex-column text-center flex-grow-1 w-100'>
-					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center'>{this.props.type}</div>
-					<div className='flex-center flex-column flex-grow-7'>
+				<div className='d-flex flex-column text-center flex-grow-1 w-100 flex-basis-0'>
+					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center flex-grow-1'>{this.props.type}</div>
+					<div className='flex-center flex-column flex-grow-10'>
 						<div className='flex-center flex-column flex-1'>
 							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{this.state.correct != null &&
@@ -210,7 +210,7 @@ export default class Question extends Component {
 							}
 						</div>
 					</div>
-					<div className='h4 m-0 d-flex flex-column flex-grow-2 flex-basis-0'>
+					<div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
 						{answerArea}
 						<div className='d-flex flex-row flex-1 flex-all-even'>
 							<div className='flex-center flex-column'>
