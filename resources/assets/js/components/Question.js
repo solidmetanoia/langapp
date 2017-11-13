@@ -153,7 +153,7 @@ export default class Question extends Component {
 			}
 
 			required = (
-				<div className={required_color +' h3 p-0 m-0 flex-column flex-center'}>
+				<div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
 					{this.state.correct == null ?
 						(this.state.data.required || "Answer type missing"):
 					 	this.state.data.correct.meaning
@@ -221,7 +221,7 @@ export default class Question extends Component {
 					<div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
 						{answerArea}
 						<div className='d-flex flex-row flex-1 flex-all-even'>
-							<div className='flex-center p-2 flex-column'>
+							<div className='flex-center flex-column'>
 								{this.state.data.correct.type || "Word type missing"}
 							</div>
 							{required}
