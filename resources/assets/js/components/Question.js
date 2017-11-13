@@ -59,9 +59,9 @@ export default class Question extends Component {
 					else if (response.data.status == 'fail')
 						this.setState({correct: false})
 					else if (response.data.status == 'context'){
-						this.setState({message: response.data.message})
 						e.target.disabled = false;
 					}
+					this.setState({message: response.data.message})
 					// this.getNextItem(this.props.language, this.props.type);
 				}
 			})
@@ -153,7 +153,7 @@ export default class Question extends Component {
 			}
 
 			required = (
-				<div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
+				<div className={required_color +' h3 p-0 m-0 flex-column flex-center'}>
 					{this.state.correct == null ?
 						(this.state.data.required || "Answer type missing"):
 					 	this.state.data.correct.meaning
@@ -173,11 +173,13 @@ export default class Question extends Component {
 				switch(data.answer_type){
 					case 'button':
 						answerArea =
-						<div className="flex-1 flex-center flex-column flex-all-even">
-							<div className='d-none d-lg-flex flex-center bg-primary p-1'>
-								{data.answers.map((answer, index)=>{
-									return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-lg btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
-								})}
+						<div>
+							<div className="flex-1 d-none d-lg-flex flex-center flex-column flex-all-even">
+								<div className='flex-center bg-primary p-1 flex-wrap'>
+									{data.answers.map((answer, index)=>{
+										return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-lg btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
+									})}
+								</div>
 							</div>
 							<div className='d-md-block d-lg-none bg-primary p-1'>
 								{data.answers.map((answer, index)=>{
@@ -198,13 +200,13 @@ export default class Question extends Component {
 						break;
 				}
 			} else {
-				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
+				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.setState({message: null}); this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
 			}
 
 			return (
-				<div className='d-flex flex-column text-center flex-grow-1 w-100'>
-					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center'>{this.props.type}</div>
-					<div className='flex-center flex-column flex-grow-7'>
+				<div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
+					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
+					<div className='flex-center flex-column flex-grow-9'>
 						<div className='flex-center flex-column flex-1'>
 							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{this.state.correct != null &&
@@ -216,10 +218,10 @@ export default class Question extends Component {
 							}
 						</div>
 					</div>
-					<div className='h4 m-0 d-flex flex-column flex-grow-2 flex-basis-0'>
+					<div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
 						{answerArea}
 						<div className='d-flex flex-row flex-1 flex-all-even'>
-							<div className='flex-center flex-column'>
+							<div className='flex-center p-2 flex-column'>
 								{this.state.data.correct.type || "Word type missing"}
 							</div>
 							{required}
@@ -228,8 +230,8 @@ export default class Question extends Component {
 							</div>
 						</div>
 					</div>
-					<div className='bg-secondary d-smh-none flex-grow-1 h2 p-2 m-0 flex-column flex-center'>
-						{this.state.message}
+					<div className='bg-secondary flex-grow-1 h4 p-0 m-0 flex-column flex-center'>
+						{this.state.message || '　'}
 					</div>
 				</div>
 			)
