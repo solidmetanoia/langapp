@@ -12,6 +12,7 @@ export default class Question extends Component {
 			correct: null,
 			answer: null,
 			message: null,
+			hard_mode: null,
 			defaultData: {
 				"correct": {
 					"word": "TEST",
@@ -22,7 +23,9 @@ export default class Question extends Component {
 					"example_en": "MEANING TEST SENTENCE",
 				},
 				"answer_type": "input",
-			}
+			},
+			keySequenceNeed: [72, 65, 82, 68, 32, 83, 79, 85, 76, 83],
+			keySequenceRec: [],
 		};
 
 		this.getNextItem = this.getNextItem.bind(this);
@@ -40,6 +43,7 @@ export default class Question extends Component {
 			type: this.state.data.answer_type,
 			required: this.state.data.required,
 			answer: e.target.value,
+			hard_mode: this.state.hard_mode
 		};
 		this.setState({answered: e.target.value, message: null});
 		e.persist();
@@ -97,6 +101,23 @@ export default class Question extends Component {
 				document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
 			}
 		}
+
+		{
+			let key = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+			if(this.state.keySequenceNeed.includes(e.keyCode) && !this.state.hard_mode) {
+				if (e.keyCode != this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
+					this.setState({keySequenceRec: []});
+				}
+				if (e.keyCode == this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
+					this.setState({keySequenceRec: this.state.keySequenceRec.concat(key)});
+					console.log(key);
+					console.log(this.state);
+				}
+				if (this.state.keySequenceNeed.toString() == this.state.keySequenceRec.toString()) {
+					this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
+				}
+			}
+		}
 	}
 
 	componentDidMount(){
@@ -117,6 +138,9 @@ export default class Question extends Component {
 			headers: {
 				Accept: 'application/json',
 				Authorization: 'Bearer '+localStorage.getItem('access_token')
+			},
+			params: {
+				hard_mode: this.state.hard_mode
 			}
 		})
 		.then((response) => {
@@ -156,7 +180,9 @@ export default class Question extends Component {
 				<div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
 					{this.state.correct == null ?
 						(this.state.data.required || "Answer type missing"):
-					 	this.state.data.correct.meaning
+					 	(this.state.data.required == 'meaning' ?
+							this.state.data.correct.meaning :
+							this.state.data.correct.reading)
 					}
 				</div>
 			);
@@ -205,12 +231,16 @@ export default class Question extends Component {
 
 			return (
 				<div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
-					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
-					<div className='flex-center flex-column flex-grow-9'>
+					<div className='h2 p-1 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
+					<div className='flex-center flex-column flex-grow-lg-9 flex-grow-md-6'>
 						<div className='flex-center flex-column flex-1'>
 							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{this.state.correct != null &&
-								<div className='h3 pm0'>{this.state.data.correct.reading}</div>
+								<div className='h3 pm0'>{
+									(this.state.data.required == 'reading' ?
+										this.state.data.correct.meaning :
+										this.state.data.correct.reading)
+									}</div>
 							}
 							{example}
 							{this.state.correct != null &&
