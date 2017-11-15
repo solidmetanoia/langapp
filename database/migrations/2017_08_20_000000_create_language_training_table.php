@@ -15,7 +15,7 @@ class CreateLanguageTrainingTable extends Migration
     {
         // hiragana_katakana_list (id, symbol, reading (, AUDIO PROUNCIATION?));
         // core_6k_list (id, item, meaning, reading, example (, AUDIO PROUNCIATION ITEM, AUDIO PROUNCIATION EXAMPLE?));
-        
+
         Schema::create('basics_list', function (Blueprint $table) {
             $table->increments('id');
             $table->string('letter_ja');
@@ -69,7 +69,7 @@ class CreateLanguageTrainingTable extends Migration
      * @return void
      */
     public function down()
-    {   
+    {
         Schema::table('study_progress_core', function(Blueprint $table){
           $table->dropForeign('study_progress_core_user_id_foreign');
           $table->dropForeign('study_progress_core_item_id_foreign');
@@ -82,6 +82,6 @@ class CreateLanguageTrainingTable extends Migration
         Schema::dropIfExists('study_progress_core');
         Schema::dropIfExists('basics_list');
         Schema::dropIfExists('core_6k_list');
-        
+
     }
 }
