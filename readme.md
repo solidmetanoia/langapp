@@ -5,11 +5,11 @@ It's an NGE joke.
 Add hiragana and katakana to study  
 Add kanji to study  
 Add grammar to study  
-Add audio
+Add audio  
 Create a Cordova ver. (Running version exists, needs a public server)  
-Create a repo specificall for Cordova ver. with React replaced by React Native  
-Raise / reset difficulty  
-Button only / text only modes  
+Create a repo specifically for Cordova ver. with React replaced by React Native  
+Raise / reset difficulty (Raise difficulty to max by writing 'hard souls')  
+Button only / text only modes (Text only available through hard mode)  
 Design changes  
 
 # Ez

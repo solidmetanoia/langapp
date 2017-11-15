@@ -25,7 +25,7 @@ class StudyController extends Controller
 	// Update card
 	// Get card by study type
 	// .....
-	public function getVocabularyCard(){
+	public function getVocabularyCard(Request $request){
 
 		// Eventually replace 'card' with 'word' maybe
 
@@ -124,11 +124,11 @@ class StudyController extends Controller
 		$data['required'] = 'meaning';
 
 		// After X correct answers use text input
-		if($data['correct']->study_rate > 20 || isset($data['give_me_text'])) {
+		if($data['correct']->study_rate > 20 || $request->input('hard_mode')) {
 			$data['answer_type'] = 'input';
 			$data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
 			$random = mt_rand(0, 1);
-			if(($data['correct']->study_rate) - $random*100 > 40){
+			if(($data['correct']->study_rate) - $random*100 > 40 || $request->input('hard_mode')){
 				$data['correct']->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
 				$data['required'] = 'reading';
 			}
@@ -196,6 +196,10 @@ class StudyController extends Controller
 
 		DB::beginTransaction();
 		if($correct){
+			$points = $progress->study_rate + 1 +
+				(($progress->streak >= 1) ? log($progress->streak) * (
+					!empty($data['hard_mode']) ? 2 : 1
+					) : 0);
 			$proc = DB::table('study_progress_core')
 				->where([
 					'user_id' => \Auth::id(),
@@ -203,7 +207,7 @@ class StudyController extends Controller
 				])
 				->update([
 					'streak' => $progress->streak + 1,
-					'study_rate' => $progress->study_rate + 1 + (($progress->streak >= 1) ? log($progress->streak) : 0),
+					'study_rate' => $points,
 					'updated_at' => Carbon::now()
 				]);
 			$output['status'] = 'success';
@@ -215,7 +219,7 @@ class StudyController extends Controller
 				])
 				->update([
 					'streak' => 0,
-					'study_rate' => $progress->study_rate * .95,
+					'study_rate' => $progress->study_rate * (empty($data['hard_mode']) ? .95 : .8),
 					'updated_at' => Carbon::now()
 				]);
 			$output['status'] = 'fail';

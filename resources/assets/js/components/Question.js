@@ -12,6 +12,7 @@ export default class Question extends Component {
 			correct: null,
 			answer: null,
 			message: null,
+			hard_mode: null,
 			defaultData: {
 				"correct": {
 					"word": "TEST",
@@ -22,7 +23,9 @@ export default class Question extends Component {
 					"example_en": "MEANING TEST SENTENCE",
 				},
 				"answer_type": "input",
-			}
+			},
+			keySequenceNeed: [72, 65, 82, 68, 32, 83, 79, 85, 76, 83],
+			keySequenceRec: [],
 		};
 
 		this.getNextItem = this.getNextItem.bind(this);
@@ -40,6 +43,7 @@ export default class Question extends Component {
 			type: this.state.data.answer_type,
 			required: this.state.data.required,
 			answer: e.target.value,
+			hard_mode: this.state.hard_mode
 		};
 		this.setState({answered: e.target.value, message: null});
 		e.persist();
@@ -59,9 +63,9 @@ export default class Question extends Component {
 					else if (response.data.status == 'fail')
 						this.setState({correct: false})
 					else if (response.data.status == 'context'){
-						this.setState({message: response.data.message})
 						e.target.disabled = false;
 					}
+					this.setState({message: response.data.message})
 					// this.getNextItem(this.props.language, this.props.type);
 				}
 			})
@@ -97,6 +101,23 @@ export default class Question extends Component {
 				document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
 			}
 		}
+
+		{
+			let key = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+			if(this.state.keySequenceNeed.includes(e.keyCode) && !this.state.hard_mode) {
+				if (e.keyCode != this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
+					this.setState({keySequenceRec: []});
+				}
+				if (e.keyCode == this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
+					this.setState({keySequenceRec: this.state.keySequenceRec.concat(key)});
+					console.log(key);
+					console.log(this.state);
+				}
+				if (this.state.keySequenceNeed.toString() == this.state.keySequenceRec.toString()) {
+					this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
+				}
+			}
+		}
 	}
 
 	componentDidMount(){
@@ -117,6 +138,9 @@ export default class Question extends Component {
 			headers: {
 				Accept: 'application/json',
 				Authorization: 'Bearer '+localStorage.getItem('access_token')
+			},
+			params: {
+				hard_mode: this.state.hard_mode
 			}
 		})
 		.then((response) => {
@@ -156,7 +180,9 @@ export default class Question extends Component {
 				<div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
 					{this.state.correct == null ?
 						(this.state.data.required || "Answer type missing"):
-					 	this.state.data.correct.meaning
+					 	(this.state.data.required == 'meaning' ?
+							this.state.data.correct.meaning :
+							this.state.data.correct.reading)
 					}
 				</div>
 			);
@@ -173,11 +199,13 @@ export default class Question extends Component {
 				switch(data.answer_type){
 					case 'button':
 						answerArea =
-						<div className="flex-1 flex-center flex-column flex-all-even">
-							<div className='d-none d-lg-flex flex-center bg-primary p-1'>
-								{data.answers.map((answer, index)=>{
-									return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-lg btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
-								})}
+						<div>
+							<div className="flex-1 d-none d-lg-flex flex-center flex-column flex-all-even">
+								<div className='flex-center bg-primary p-1 flex-wrap'>
+									{data.answers.map((answer, index)=>{
+										return <input type='button' key={100+index} value={answer.meaning || answer} onClick={this.handleAnswer} className='btn btn-lg btn-success border-primary flex-1 text-center text-light rounded-0'></input>;
+									})}
+								</div>
 							</div>
 							<div className='d-md-block d-lg-none bg-primary p-1'>
 								{data.answers.map((answer, index)=>{
@@ -198,17 +226,21 @@ export default class Question extends Component {
 						break;
 				}
 			} else {
-				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
+				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.setState({message: null}); this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
 			}
 
 			return (
-				<div className='d-flex flex-column text-center flex-grow-1 w-100 flex-basis-0'>
-					<div className='h2 p-2 m-0 bg-secondary d-smh-none flex-column flex-center flex-grow-1'>{this.props.type}</div>
-					<div className='flex-center flex-column flex-grow-10'>
+				<div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
+					<div className='h2 p-1 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
+					<div className='flex-center flex-column flex-grow-lg-9 flex-grow-md-6'>
 						<div className='flex-center flex-column flex-1'>
 							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{this.state.correct != null &&
-								<div className='h3 pm0'>{this.state.data.correct.reading}</div>
+								<div className='h3 pm0'>{
+									(this.state.data.required == 'reading' ?
+										this.state.data.correct.meaning :
+										this.state.data.correct.reading)
+									}</div>
 							}
 							{example}
 							{this.state.correct != null &&
@@ -228,8 +260,8 @@ export default class Question extends Component {
 							</div>
 						</div>
 					</div>
-					<div className='bg-secondary d-smh-none flex-grow-1 h2 p-2 m-0 flex-column flex-center'>
-						{this.state.message}
+					<div className='bg-secondary flex-grow-1 h4 p-0 m-0 flex-column flex-center'>
+						{this.state.message || '　'}
 					</div>
 				</div>
 			)
