@@ -25,11 +25,15 @@ class StudyController extends Controller
 	// Update card
 	// Get card by study type
 	// .....
-	public function getVocabularyCard(Request $request){
 
-		// Eventually replace 'card' with 'word' maybe
+	###########################################################
+	#=======================Generalize=========================
+	###########################################################
 
-		$progress = DB::table('study_progress_core')
+	private function getCard($request){
+		$study_table = 'study_progress_'.$request['study_type'];
+		$word_table = $request['list_type'].'_list';
+		$progress = DB::table($study_table)
 			->where([
 				'user_id' => \Auth::id(),
 				'updated_at' => null
@@ -39,7 +43,7 @@ class StudyController extends Controller
 
 		if(!$progress->first()){
 			// Get <step> items from <study progress> where <authorized user's ID>
-			$progress = DB::table('study_progress_core')
+			$progress = DB::table($study_table)
 				->where('user_id', \Auth::id())
 				// ->where('item_id', '!=', $item_id)
 				->orderBy('study_rate', 'asc')
@@ -68,8 +72,8 @@ class StudyController extends Controller
 
 			if($add_new){
 				DB::beginTransaction();
-				$last_possible_id = DB::table('core_6k_list')->orderBy('id', 'desc')->first();
-				$last_study_id = DB::table('study_progress_core')
+				$last_possible_id = DB::table($word_table)->orderBy('id', 'desc')->first();
+				$last_study_id = DB::table($study_table)
 						->where('user_id', \Auth::id())
 						->orderBy('item_id', 'desc')->first();
 				$next_study_id = ($last_study_id)?$last_study_id->item_id + 1:1;
@@ -90,11 +94,11 @@ class StudyController extends Controller
 					];
 				}
 
-				DB::table('study_progress_core')->insert($items_to_add);
+				DB::table($study_table)->insert($items_to_add);
 				DB::commit();
 
 				// Re-retrieve after inserting
-				$progress = DB::table('study_progress_core')
+				$progress = DB::table($study_table)
 					->where('user_id', \Auth::id())
 					// ->where('item_id', '!=', $item_id)
 					->orderBy('study_rate', 'asc')
@@ -109,10 +113,61 @@ class StudyController extends Controller
 		// If card has not been updated
 		if($progress->first()->updated_at != NULL)
 			$progress = $progress->shuffle();
-		$card = DB::table('study_progress_core')
+		$card = DB::table($study_table.' as study_list')
 			->where('item_id', $progress->first()->item_id)
-			->join('core_6k_list', 'core_6k_list.id', '=', 'study_progress_core.item_id')
-			->select('study_progress_core.study_rate', 'core_6k_list.*')->first();
+			->join($word_table.' as word_table', 'word_table.id', '=', 'study_list.item_id')
+			->select('study_list.study_rate', 'study_list.updated_at', 'word_table.*')->first();
+
+		return $card;
+	}
+
+	public function postCard($data, $progress){
+		DB::beginTransaction();
+		if($data['correct']){
+			$points = $progress->study_rate + 1 +
+				(($progress->streak >= 1) ? log($progress->streak) * (
+					!empty($data['hard_mode']) ? 2 : 1
+					) : 0);
+			$proc = DB::table('study_progress_'.$data['study_table'])
+				->where([
+					'user_id' => \Auth::id(),
+					'item_id' => $data['question']
+				])
+				->update([
+					'streak' => $progress->streak + 1,
+					'study_rate' => $points,
+					'updated_at' => Carbon::now()
+				]);
+			$output['status'] = 'success';
+		} else {
+			$proc = DB::table('study_progress_'.$data['study_table'])
+				->where([
+					'user_id' => \Auth::id(),
+					'item_id' => $data['question']
+				])
+				->update([
+					'streak' => 0,
+					'study_rate' => $progress->study_rate * (empty($data['hard_mode']) ? .95 : .8),
+					'updated_at' => Carbon::now()
+				]);
+			$output['status'] = 'fail';
+		}
+		$output['proc'] = $proc;
+		DB::commit();
+		return $output;
+	}
+
+	###########################################################
+	#=======================Per route==========================
+	###########################################################
+
+	public function getVocabularyCard(Request $request){
+
+		// Eventually replace 'card' with 'word' maybe
+		$card = $this->getCard([
+			'study_type' => 'core',
+			'list_type' => 'core_6k'
+		]);
 
 		// if study rate high enough to remove furigana from seeking word
 		// $card->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
@@ -123,8 +178,10 @@ class StudyController extends Controller
 		$data['correct'] = $card;
 		$data['required'] = 'meaning';
 
-		// After X correct answers use text input
-		if($data['correct']->study_rate > 20 || $request->input('hard_mode')) {
+		// If the study rate is high enough
+		// OR
+		// hard mode is on AND the word is seen for the first time
+		if($data['correct']->study_rate > 20 || $request->input('hard_mode') && $data['correct']->updated_at != NULL){
 			$data['answer_type'] = 'input';
 			$data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
 			$random = mt_rand(0, 1);
@@ -133,6 +190,7 @@ class StudyController extends Controller
 				$data['required'] = 'reading';
 			}
 		} else {
+			// Get words the user has seen before for the wrong answer buttons
 			$data['answer_type'] = 'button';
 			$answers = DB::table('study_progress_core')
 				->where([
@@ -151,11 +209,11 @@ class StudyController extends Controller
 	}
 
 	public function postVocabularyCard(Request $request){
-		// Get the question'S ID, NOT THE QUESTION and answer
 		// Where in core_6k_list question check answer
 		// If true increase study_progress_core score
 		// If false reduce points by 5% percent
-
+		// Hard mode increases the streak rise by 2,
+		// but bad answers lose 20% of progress for word
 		$data = $request->all();
 		$question = DB::table('core_6k_list')
 			->where([
@@ -167,7 +225,7 @@ class StudyController extends Controller
 			->where([
 				['id', '!=', $data['question']],
 				['word', '=', $question->word]
-			])->select('meaning')->get()->implode('meaning', ', ');
+			])->select($data['required'])->get()->implode($data['required'], ', ');
 
 		$correct = false;
 		if($data['type'] != 'button'){
@@ -194,40 +252,19 @@ class StudyController extends Controller
 				'item_id' => $data['question']
 			])->first();
 
-		DB::beginTransaction();
-		if($correct){
-			$points = $progress->study_rate + 1 +
-				(($progress->streak >= 1) ? log($progress->streak) * (
-					!empty($data['hard_mode']) ? 2 : 1
-					) : 0);
-			$proc = DB::table('study_progress_core')
-				->where([
-					'user_id' => \Auth::id(),
-					'item_id' => $data['question']
-				])
-				->update([
-					'streak' => $progress->streak + 1,
-					'study_rate' => $points,
-					'updated_at' => Carbon::now()
-				]);
-			$output['status'] = 'success';
-		} else {
-			$proc = DB::table('study_progress_core')
-				->where([
-					'user_id' => \Auth::id(),
-					'item_id' => $data['question']
-				])
-				->update([
-					'streak' => 0,
-					'study_rate' => $progress->study_rate * (empty($data['hard_mode']) ? .95 : .8),
-					'updated_at' => Carbon::now()
-				]);
-			$output['status'] = 'fail';
-		}
-		$output['proc'] = $proc;
-		DB::commit();
+		$output = $this->postCard([
+			'hard_mode' => !empty($data['hard_mode']),
+			'study_table' => 'core',
+			'question' => $data['question'],
+			'correct' => $correct
+		], $progress);
+
 		return response()->json($output, 200);
 	}
+
+	###########################################################
+	#====================Data proccessing======================
+	###########################################################
 
 	private function separateAnswers($data){
 		return array_map('strtolower', array_map('trim', explode(', ', preg_replace('/\(.*?\)/', '', $data))));
@@ -318,7 +355,7 @@ class StudyController extends Controller
 
 	private function sift4Recursive($answer, $correct){
 		foreach ($correct as $string) {
-			if($this->sift4PHP($answer, $string, 1) <=  strlen($string)/5){
+			if($this->sift4PHP($answer, $string, 1) <=  mb_strlen($string)/5){
 				return true;
 			}
 		}
