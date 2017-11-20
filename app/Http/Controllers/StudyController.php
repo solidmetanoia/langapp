@@ -18,6 +18,9 @@ class StudyController extends Controller
 	{
 		$this->base_study_rate = 15;
 		$this->step = 10;
+		// Should never activate unless Auth is removed from routing.
+		if(!\Auth::id())
+			return response()->json(['error' => 'Not Authenticated'], 401);
 	}
 
 	// Requires:
@@ -161,8 +164,16 @@ class StudyController extends Controller
 	#=======================Per route==========================
 	###########################################################
 
-	public function getVocabularyCard(Request $request){
+	public function getNLevelCard(Request $request, $level, $type){
+		$card = $this->getCard([
+			'study_type' => '{$level}_{$type}',
+			'list_type' => '{$level}_{$type}'
+		]);
+		
+		return response()->json(level, 200);
+	}
 
+	public function getVocabularyCard(Request $request){
 		// Eventually replace 'card' with 'word' maybe
 		$card = $this->getCard([
 			'study_type' => 'core',
