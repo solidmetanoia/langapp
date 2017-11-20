@@ -232,7 +232,7 @@ export default class Question extends Component {
 			return (
 				<div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
 					<div className='h2 p-1 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
-					<div className='flex-center flex-column flex-grow-lg-9 flex-grow-md-6'>
+					<div className='flex-center flex-column flex-grow-lg-9 flex-grow-6'>
 						<div className='flex-center flex-column flex-1'>
 							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{this.state.correct != null &&
