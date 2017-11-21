@@ -255,7 +255,6 @@ class StudyController extends Controller
 			$joint_type = "core";
 
 		$data = $request->all();
-
 		$question = DB::table("{$joint_type}_list")
 			->where([
 				'id' => $data['question'],
@@ -310,7 +309,16 @@ class StudyController extends Controller
 	###########################################################
 
 	private function separateAnswers($data){
-		return array_map('strtolower', array_map('trim', explode(', ', preg_replace('/\(.*?\)/', '', $data))));
+		return
+			array_unique(
+				array_merge(
+					array_merge(
+						array_map('strtolower', array_map('trim', explode(', ', preg_replace('/\(.*?\)/', '', $data)))),
+						array_map('strtolower', array_map('trim', explode(', ', preg_replace('/\((.*?)\)/', '$1', $data))))
+					),
+					array_map('strtolower', array_map('trim', explode(', ', $data)))
+				)
+			);
 	}
 
 	private function sift4PHP($str1, $str2, $maxOffset, $maxDistance = 0){
