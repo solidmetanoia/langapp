@@ -33,7 +33,7 @@ class StudyController extends Controller
 	#=======================Generalize=========================
 	###########################################################
 
-	private function getCard($request){
+	protected function getCard($request){
 		$study_table = 'study_progress_'.$request['study_type'];
 		$word_table = $request['list_type'].'_list';
 		$progress = DB::table($study_table)
@@ -124,7 +124,7 @@ class StudyController extends Controller
 		return $card;
 	}
 
-	public function postCard($data, $progress){
+	protected function postCard($data, $progress){
 		DB::beginTransaction();
 		if($data['correct']){
 			$points = $progress->study_rate + 1 +
@@ -160,27 +160,61 @@ class StudyController extends Controller
 		return $output;
 	}
 
+	protected function getFakeAnswers($joint_type, $id){
+		$answers = DB::table("study_progress_{$joint_type}")
+			->where([
+				['user_id', '=' , \Auth::id()],
+				['item_id', '!=' , $id],
+				['updated_at', '!=', 'NULL']
+			])
+			->inRandomOrder()->take(5)
+			->join("{$joint_type}_list", "{$joint_type}_list.id", '=', "study_progress_{$joint_type}.item_id")
+			->select("{$joint_type}_list.*")->get()->pluck('meaning');
+		return $answers->shuffle();
+	}
+
 	###########################################################
 	#=======================Per route==========================
 	###########################################################
 
-	public function getNLevelCard(Request $request, $level, $type){
+	//getNLevelCard and getVocabularyCard could be more generalized.
+	public function getNLevelCard(Request $request, $type, $level){
+		$joint_type = "n{$level}_{$type}";
+
 		$card = $this->getCard([
-			'study_type' => "n{$level}_{$type}",
-			'list_type' => "n{$level}_{$type}"
+			'study_type' => $joint_type,
+			'list_type' => $joint_type
 		]);
 
 		// If type = vocabulary, get vocabulary, if type = kanji get kanji
 		// Generalize getVocab?
 
+		$data['correct'] = $card;
+		$data['required'] = 'meaning';
+
+		if($data['correct']->study_rate > 20 || $request->input('hard_mode') && $data['correct']->updated_at != NULL){
+			$data['answer_type'] = 'input';
+			$random = mt_rand(0, 1);
+			if($type == "vocabulary"){
+				if(($data['correct']->study_rate) - $random*100 > 40 || $request->input('hard_mode')){
+					$data['required'] = 'reading';
+				}
+			}
+		} else {
+			$data['answer_type'] = 'button';
+			$answers = $this->getFakeAnswers($joint_type, $data['correct']->id);
+			$answers->push($data['correct']->meaning);
+			$data['answers'] = $answers->shuffle();
+		}
+
 		return response()->json($data, 200, [], JSON_PRETTY_PRINT);
 	}
 
-	public function getVocabularyCard(Request $request){
+	public function getVocabularyCard(Request $request, $type = 'core'){
 		// Eventually replace 'card' with 'word' maybe
 		$card = $this->getCard([
-			'study_type' => 'core',
-			'list_type' => 'core_6k'
+			'study_type' => $type,
+			'list_type' => $type
 		]);
 
 		// if study rate high enough to remove furigana from seeking word
@@ -206,15 +240,7 @@ class StudyController extends Controller
 		} else {
 			// Get words the user has seen before for the wrong answer buttons
 			$data['answer_type'] = 'button';
-			$answers = DB::table('study_progress_core')
-				->where([
-					['user_id', '=' , \Auth::id()],
-					['item_id', '!=' , $data['correct']->id],
-					['updated_at', '!=', 'NULL']
-				])
-				->inRandomOrder()->take(5)
-				->join('core_6k_list', 'core_6k_list.id', '=', 'study_progress_core.item_id')
-				->select('core_6k_list.*')->get()->pluck('meaning');
+			$answers = $this->getFakeAnswers($type, $data['correct']->id);
 			$answers->push($data['correct']->meaning);
 			$data['answers'] = $answers->shuffle();
 		}
@@ -222,20 +248,23 @@ class StudyController extends Controller
 		return response()->json($data, 200, [], JSON_PRETTY_PRINT);
 	}
 
-	public function postVocabularyCard(Request $request){
-		// Where in core_6k_list question check answer
-		// If true increase study_progress_core score
-		// If false reduce points by 5% percent
-		// Hard mode increases the streak rise by 2,
-		// but bad answers lose 20% of progress for word
+	public function postJapaneseCard(Request $request, $type, $level = null){
+		if($level != null)
+			$joint_type = "n{$level}_{$type}";
+		else
+			$joint_type = "core";
+
 		$data = $request->all();
-		$question = DB::table('core_6k_list')
+
+		$question = DB::table("{$joint_type}_list")
 			->where([
 				'id' => $data['question'],
 				// 'meaning' => $data['answer'] // later should be not static meaning but received
 			])->first();
+		if($data['required'] == 'reading' && empty($question->reading))
+			$data['required'] = 'word';
 
-		$same_word_but_wrong = DB::table('core_6k_list')
+		$same_word_but_wrong = DB::table("{$joint_type}_list")
 			->where([
 				['id', '!=', $data['question']],
 				['word', '=', $question->word]
@@ -260,7 +289,7 @@ class StudyController extends Controller
 				$correct = true;
 		}
 
-		$progress = DB::table('study_progress_core')
+		$progress = DB::table("study_progress_{$joint_type}")
 			->where([
 				'user_id' => \Auth::id(),
 				'item_id' => $data['question']
@@ -268,7 +297,7 @@ class StudyController extends Controller
 
 		$output = $this->postCard([
 			'hard_mode' => !empty($data['hard_mode']),
-			'study_table' => 'core',
+			'study_table' => $joint_type,
 			'question' => $data['question'],
 			'correct' => $correct
 		], $progress);

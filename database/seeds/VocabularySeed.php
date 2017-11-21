@@ -6020,10 +6020,10 @@ class VocabularySeed extends Seeder
 ['word' => "便箋", 'meaning' => "letter paper, stationery", 'type' => "Noun", 'reading' => "びんせん", 'example_ja' => "<ruby><rb>友達</rb><rt>ともだち</rt></ruby>に <ruby><rb>手紙</rb><rt>てがみ</rt></ruby>を <ruby><rb>書</rb><rt>か</rt></ruby>こうと<b> <ruby><rb>便箋</rb><rt>びんせん</rt></ruby></b>を <ruby><rb>買</rb><rt>か</rt></ruby>ったんだ。", 'example_en' => "I bought writing paper as I intended to write a letter to my friend.", 'reading_sound' => "31bfc30fa00b5b980c93c722818b0827.mp3", 'example_sound' => "b19059bdc72abfefba85a0d2c0611a2a.mp3"],
         ];
 
-        DB::table('core_6k_list')->insert($core_cards1);
-        DB::table('core_6k_list')->insert($core_cards2);
-        DB::table('core_6k_list')->insert($core_cards3);
-        DB::table('core_6k_list')->insert($core_cards4);
+        DB::table('core_list')->insert($core_cards1);
+        DB::table('core_list')->insert($core_cards2);
+        DB::table('core_list')->insert($core_cards3);
+        DB::table('core_list')->insert($core_cards4);
 
        	DB::commit();
     }

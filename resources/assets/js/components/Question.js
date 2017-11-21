@@ -29,9 +29,6 @@ export default class Question extends Component {
 		};
 
 		this.getNextItem = this.getNextItem.bind(this);
-
-		this.getNextItem();
-
 		this.handleAnswer = this.handleAnswer.bind(this);
 		this.handleKeyDown = this.handleKeyDown.bind(this);
 		this.quickButton = this.quickButton.bind(this);
@@ -114,6 +111,10 @@ export default class Question extends Component {
 					console.log(this.state);
 				}
 				if (this.state.keySequenceNeed.toString() == this.state.keySequenceRec.toString()) {
+					console.log("Hard mode on.");
+					console.log("◯　Correct answer streak points doubled.");
+					console.log("✕　Incorrect answer point loss quadrupled.");
+
 					this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
 					this.getNextItem();
 				}
@@ -122,6 +123,7 @@ export default class Question extends Component {
 	}
 
 	componentDidMount(){
+		this.getNextItem();
 		document.addEventListener("keydown", this.quickButton, false);
 	}
 	componentWillUnmount(){
@@ -130,7 +132,7 @@ export default class Question extends Component {
 
 	componentWillReceiveProps(nextProps){
 		if(this.props != nextProps){
-			this.getNextItem(nextProps.language, nextProps.type);
+			this.getNextItem(nextProps.language, nextProps.type, nextProps.list);
 		}
 	}
 
@@ -161,13 +163,19 @@ export default class Question extends Component {
 			return <div className="text-center"><div className="h3">Loading...</div></div>
 		} else {
 			let data = this.state.data;
-			let example, information, required, required_color = null;
+			let example, information, required, required_color, postAnswer = null;
 			let answerArea = [];
 
 			information = (
-				<div>
+				<div className="d-flex flex-column align-items-center h4 pm0">
 					<hr/>
-					<div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
+					{this.props.type != 'kanji'
+						? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
+						: (
+							<div className="flex-grow-1">onyomi: {this.state.data.correct.onyomi}</div>,
+							<div className="flex-grow-1">kunyomi: {this.state.data.correct.kunyomi}</div>
+						)
+					}
 				</div>
 			);
 
@@ -230,30 +238,31 @@ export default class Question extends Component {
 				answerArea = <input type='button' autoFocus key={63} onClick={() => { this.setState({message: null}); this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
 			}
 
+			postAnswer = (
+				<div className='h3 pm0'>
+					{this.state.data.required == 'reading' ? this.state.data.correct.meaning : this.state.data.correct.reading}
+				</div>
+			);
+
 			return (
 				<div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
 					<div className='h2 p-1 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
 					<div className='flex-center flex-column flex-grow-lg-9 flex-grow-6'>
 						<div className='flex-center flex-column flex-1'>
-							<div className={this.state.correct == null ? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
+							<div className={(this.state.correct == null || this.props.type == 'kanji')? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
 							{this.state.correct != null &&
-								<div className='h3 pm0'>{
-									(this.state.data.required == 'reading' ?
-										this.state.data.correct.meaning :
-										this.state.data.correct.reading)
-									}</div>
-							}
+								postAnswer}
 							{example}
 							{this.state.correct != null &&
-								information
-							}
+								information}
 						</div>
 					</div>
 					<div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
 						{answerArea}
 						<div className='d-flex flex-row flex-1 flex-all-even'>
 							<div className='flex-center flex-column'>
-								{this.state.data.correct.type || "Word type missing"}
+								{this.state.data.correct.type ||
+									this.props.type != 'kanji' ? "Word type missing" : ''}
 							</div>
 							{required}
 							<div className={(this.state.correct == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>

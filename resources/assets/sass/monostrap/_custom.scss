@@ -28,17 +28,17 @@
 					background-color: lighten(map-get($theme-colors, primary), $theme-color-interval);
 				}
 				&.active {
-					border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*2.5);
+					border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval);
 					background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*2);
 				}
 			}
 		}
 
 		.nav-item > div {
-			border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*1.5);
+			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
 		}
 		.nav-item > div div{
-			border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*2);
+			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2.5);
 		}
 	}
 
