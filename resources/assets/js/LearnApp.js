@@ -28,7 +28,7 @@ export default class LearnApp extends Component {
 					<Sidebar className='d-none d-md-block'/>
 					<div className='d-flex flex-column flex-grow-1 text-center align-items-center justify-content-center'>
 						<Route exact path='/learn' component={PreSelect}/>
-						<Route path='/learn/:language/:question' component={DisplayJapaneseQuestion}/>
+						<Route path='/learn/:language/:question/:list' component={DisplayJapaneseQuestion}/>
 					</div>
 				</div>
 			</div>
@@ -52,6 +52,10 @@ class DisplayJapaneseQuestion extends Component {
 	}
 
 	render(){
-		return <Question language={this.props.match.params.language} type={this.props.match.params.question}/>
+		return <Question
+						language={this.props.match.params.language}
+						type={this.props.match.params.question}
+						list={this.props.match.params.list}
+					/>
 	}
 }

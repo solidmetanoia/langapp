@@ -30,7 +30,7 @@ export default class Question extends Component {
 
 		this.getNextItem = this.getNextItem.bind(this);
 
-		this.getNextItem(this.props.language, this.props.type);
+		this.getNextItem();
 
 		this.handleAnswer = this.handleAnswer.bind(this);
 		this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -49,7 +49,7 @@ export default class Question extends Component {
 		e.persist();
 		e.target.disabled = true;
 
-		axios.post('/api/'+this.props.language+'/'+this.props.type, output, {
+		axios.post('/api/'+this.props.language+'/'+this.props.type+'/'+this.props.list, output, {
 				headers: {
 					Accept: 'application/json',
 					Authorization: 'Bearer '+localStorage.getItem('access_token')
@@ -115,6 +115,7 @@ export default class Question extends Component {
 				}
 				if (this.state.keySequenceNeed.toString() == this.state.keySequenceRec.toString()) {
 					this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
+					this.getNextItem();
 				}
 			}
 		}
@@ -133,8 +134,8 @@ export default class Question extends Component {
 		}
 	}
 
-	getNextItem(language = this.props.language, type = this.props.type){
-		axios.get('/api/'+language+'/'+type, {
+	getNextItem(language = this.props.language, type = this.props.type, list = this.props.list){
+		axios.get('/api/'+language+'/'+type+'/'+list, {
 			headers: {
 				Accept: 'application/json',
 				Authorization: 'Bearer '+localStorage.getItem('access_token')

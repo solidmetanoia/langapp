@@ -166,11 +166,14 @@ class StudyController extends Controller
 
 	public function getNLevelCard(Request $request, $level, $type){
 		$card = $this->getCard([
-			'study_type' => '{$level}_{$type}',
-			'list_type' => '{$level}_{$type}'
+			'study_type' => "n{$level}_{$type}",
+			'list_type' => "n{$level}_{$type}"
 		]);
-		
-		return response()->json(level, 200);
+
+		// If type = vocabulary, get vocabulary, if type = kanji get kanji
+		// Generalize getVocab?
+
+		return response()->json($data, 200, [], JSON_PRETTY_PRINT);
 	}
 
 	public function getVocabularyCard(Request $request){
