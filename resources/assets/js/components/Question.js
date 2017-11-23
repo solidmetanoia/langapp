@@ -261,8 +261,7 @@ export default class Question extends Component {
 						{answerArea}
 						<div className='d-flex flex-row flex-1 flex-all-even'>
 							<div className='flex-center flex-column'>
-								{this.state.data.correct.type ||
-									this.props.type != 'kanji' ? "Word type missing" : ''}
+								{this.state.data.correct.type}
 							</div>
 							{required}
 							<div className={(this.state.correct == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>

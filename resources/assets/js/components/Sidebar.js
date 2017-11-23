@@ -16,28 +16,21 @@ export default class Sidebar extends Component {
 						<li className='nav-item'>
 							<NavLink className='py-1 nav-link px-3 m-0' to={'/learn'}>Learn</NavLink>
 							<div>
-								<NavLink className='py-1 nav-link px-3 m-0' to={'/learn/japanese/kanji'}>japanese kanji</NavLink>
+								<NavLink className='py-1 nav-link px-3 m-0' to={'/learn/japanese'}>japanese</NavLink>
 								<div>
-									<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/kanji/n3'}>jlptn3</NavLink>
-								</div>
-							</div>
-							<div>
-								<NavLink className='py-1 nav-link px-3 m-0' to={'/learn/japanese/vocabulary'}>japanese vocabulary</NavLink>
-								<div>
-									<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/vocabulary/core'}>core</NavLink>
+									<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/kanji/n3'}>kanji jlptn3</NavLink>
 								</div>
 								<div>
-									<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/vocabulary/n3'}>jlptn3</NavLink>
+									<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/vocabulary/core'}>vocabulary core</NavLink>
 								</div>
-							</div>
-							<div>
-								<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/grammar'}>japanese grammar</NavLink>
+								<div>
+									<NavLink className='py-1 nav-link px-3 m-0' exact to={'/learn/japanese/vocabulary/n3'}>vocabulary jlptn3</NavLink>
+								</div>
 							</div>
 						</li>
 						<li className='nav-item'>
 							<NavLink className='py-1 nav-link px-3 m-0' to={'/logout'}>Logout</NavLink>
 						</li>
-
 					</nav>
 					{/*Insert study progress here?*/}
 				</div>
