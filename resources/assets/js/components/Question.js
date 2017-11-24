@@ -85,15 +85,8 @@ export default class Question extends Component {
 			if([49,50,51,52,53,54,81,87,69].includes(e.keyCode)) {
 				console.log(e);
 				let buttons = {
-					49: 0,
-					50: 1,
-					51: 2,
-					52: 3,
-					53: 4,
-					54: 5,
-					81: 3,
-					87: 4,
-					69: 5
+					49: 0, 50: 1, 51: 2, 52: 3, 53: 4, 54: 5, 81: 3, 87: 4, 69: 5
+				// 1      2      3      4      5      6      q      w      e
 				};
 				document.querySelectorAll('input[type="button"]')[buttons[e.keyCode]].click();
 			}
@@ -172,8 +165,14 @@ export default class Question extends Component {
 					{this.props.type != 'kanji'
 						? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
 						: (
-							<div className="flex-grow-1">onyomi: {this.state.data.correct.onyomi}</div>,
-							<div className="flex-grow-1">kunyomi: {this.state.data.correct.kunyomi}</div>
+							<div>
+							{this.state.data.correct.onyomi != '' &&
+								<div className="flex-grow-1">onyomi: {this.state.data.correct.onyomi}</div>
+							}
+							{this.state.data.correct.kunyomi != '' &&
+								<div className="flex-grow-1">kunyomi: {this.state.data.correct.kunyomi}</div>
+							}
+							</div>
 						)
 					}
 				</div>
