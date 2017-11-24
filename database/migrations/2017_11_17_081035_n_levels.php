@@ -19,6 +19,9 @@ class NLevels extends Migration
                 $table->string('word');
                 $table->string('meaning');
                 $table->string('reading');
+                $table->string('type');
+                $table->text('example_ja');
+                $table->string('example_en');
             });
 
             Schema::create("n{$level}_kanji_list", function (Blueprint $table) use ($level) {
