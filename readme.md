@@ -20,6 +20,9 @@ php artisan db:seed
 php artisan passport:install  
 npm install  
 npm run watch-poll  
+  
+Edit .env file to use  
+CLIENT_ID and CLIENT_SECRET env variables  
 
 # For easier use
 In button mode, can use 1 2 3 4 5 6 q w e to submit answer.  

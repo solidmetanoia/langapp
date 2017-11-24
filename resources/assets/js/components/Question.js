@@ -83,7 +83,6 @@ export default class Question extends Component {
 	quickButton(e){
 		if(this.state.data.answer_type == 'button'){
 			if([49,50,51,52,53,54,81,87,69].includes(e.keyCode)) {
-				console.log(e);
 				let buttons = {
 					49: 0, 50: 1, 51: 2, 52: 3, 53: 4, 54: 5, 81: 3, 87: 4, 69: 5
 				// 1      2      3      4      5      6      q      w      e
@@ -100,8 +99,6 @@ export default class Question extends Component {
 				}
 				if (e.keyCode == this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
 					this.setState({keySequenceRec: this.state.keySequenceRec.concat(key)});
-					console.log(key);
-					console.log(this.state);
 				}
 				if (this.state.keySequenceNeed.toString() == this.state.keySequenceRec.toString()) {
 					console.log("Hard mode on.");

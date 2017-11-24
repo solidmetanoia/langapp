@@ -196,7 +196,9 @@ class StudyController extends Controller
 			$data['answer_type'] = 'input';
 			$random = mt_rand(0, 1);
 			if($type == "vocabulary"){
+				$data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
 				if(($data['correct']->study_rate) - $random*100 > 40 || $request->input('hard_mode')){
+					$data['correct']->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
 					$data['required'] = 'reading';
 				}
 			}
