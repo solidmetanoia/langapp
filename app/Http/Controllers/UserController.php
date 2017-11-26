@@ -29,7 +29,7 @@ class UserController extends Controller
           'core' => $core
         ]
       ];
-    	return response()->json($data, 200);
+      return response()->json($data, 200);
     }
 
     // Requires:
