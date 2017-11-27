@@ -196,9 +196,9 @@ class StudyController extends Controller
       $data['answer_type'] = 'input';
       $random = mt_rand(0, 1);
       if($type == "vocabulary"){
-        $data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
+        // $data['correct']->example_ja = preg_replace('/(<b>.*?)<rt>.*?<\/rt>.*(<\/b>)/', '\1\2', $card->example_ja);
         if(($data['correct']->study_rate) - $random*100 > 40 || $request->input('hard_mode')){
-          $data['correct']->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
+          // $data['correct']->example_ja = preg_replace('/<rt>.*?<\/rt>/', '', $card->example_ja);
           $data['required'] = 'reading';
         }
       }
@@ -281,8 +281,12 @@ class StudyController extends Controller
           $correct = true;
           $output['message'] = 'slight misspelling, but ok';
         }
-        if(in_array($data['answer'], $this->separateAnswers($same_word_but_wrong)))
-          return response()->json(['status' => 'context','message' => 'look at the sentence context'], 200);
+        if(in_array($data['answer'], $this->separateAnswers($same_word_but_wrong))){
+          if(isset($question->example_en))
+            return response()->json(['status' => 'context','message' => 'look at the sentence context'], 200);
+          else
+            return response()->json(['status' => 'context','message' => 'different word for same thing'], 200);
+        }
       }
       // Should add check for string similarity?
     } else {
