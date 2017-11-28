@@ -160,16 +160,20 @@ class StudyController extends Controller
     return $output;
   }
 
-  protected function getFakeAnswers($joint_type, $id){
-    $answers = DB::table("study_progress_{$joint_type}")
+  protected function getFakeAnswers($joint_type, $id, $avoid){
+    $answers = DB::table("study_progress_{$joint_type} as sp")
       ->where([
-        ['user_id', '=' , \Auth::id()],
-        ['item_id', '!=' , $id],
-        ['updated_at', '!=', 'NULL']
+        ['sp.user_id', '=' , \Auth::id()],
+        ['sp.item_id', '!=' , $id],
+        ['sp.updated_at', '!=', 'NULL']
       ])
-      ->inRandomOrder()->take(5)
-      ->join("{$joint_type}_list", "{$joint_type}_list.id", '=', "study_progress_{$joint_type}.item_id")
-      ->select("{$joint_type}_list.*")->get()->pluck('meaning');
+      ->inRandomOrder()->take(8)
+      ->join("{$joint_type}_list as list", "list.id", '=', "sp.item_id")
+      ->where([
+        ['list.word', '!=', $avoid]
+      ])
+      ->take(5)
+      ->select("list.*")->get()->pluck('meaning');
     return $answers->shuffle();
   }
 
@@ -204,9 +208,12 @@ class StudyController extends Controller
       }
     } else {
       $data['answer_type'] = 'button';
-      $answers = $this->getFakeAnswers($joint_type, $data['correct']->id);
+      $answers = $this->getFakeAnswers($joint_type, $data['correct']->id, $data['correct']->word);
       $answers->push($data['correct']->meaning);
       $data['answers'] = $answers->shuffle();
+      foreach ($data['answers'] as $key => $value) {
+        $data['answers'][$key] = $this->removeParenthesis($value);
+      }
     }
 
     return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -242,9 +249,10 @@ class StudyController extends Controller
     } else {
       // Get words the user has seen before for the wrong answer buttons
       $data['answer_type'] = 'button';
-      $answers = $this->getFakeAnswers($type, $data['correct']->id);
+      $answers = $this->getFakeAnswers($type, $data['correct']->id, $data['correct']->word);
       $answers->push($data['correct']->meaning);
       $data['answers'] = $answers->shuffle();
+      // The () in this are more sensitive, so they don't get parenthesis removed
     }
 
     return response()->json($data, 200, [], JSON_PRETTY_PRINT);
@@ -290,7 +298,7 @@ class StudyController extends Controller
       }
       // Should add check for string similarity?
     } else {
-      if($data['answer'] == $question->meaning)
+      if($this->removeParenthesis($data['answer']) == $this->removeParenthesis($question->meaning))
         $correct = true;
     }
 
@@ -313,13 +321,19 @@ class StudyController extends Controller
   ###########################################################
   #====================Data proccessing======================
   ###########################################################
+  private function removeParenthesis($string){
+    return preg_replace('/ \(\)/', '', preg_replace('/(?<=\()(?:[^()]+|\([^)]+\))+/', '', $string));
+  }
 
   private function separateAnswers($data){
+    // Removed parenthesis and content
+    // Removed 1 level of parenthesis
+    // Pure as database
     return
       array_unique(
         array_merge(
           array_merge(
-            array_map('strtolower', array_map('trim', explode(', ', preg_replace('/\(.*?\)/', '', $data)))),
+            array_map('strtolower', array_map('trim', explode(', ', $this->removeParenthesis($data)))),
             array_map('strtolower', array_map('trim', explode(', ', preg_replace('/\((.*?)\)/', '$1', $data))))
           ),
           array_map('strtolower', array_map('trim', explode(', ', $data)))
