@@ -74,6 +74,10 @@ export default class Question extends Component {
 
   handleKeyDown(e){
     if (e.keyCode === 13) {
+      if(e.target.value == ''){
+        this.setState({message: "answer must contain content"});
+        return false;
+      }
       if(this.state.data.required == 'reading')
         e.target.value = toHiragana(e.target.value);
       this.handleAnswer(e);
@@ -186,8 +190,8 @@ export default class Question extends Component {
           {this.state.correct == null ?
             (this.state.data.required || "Answer type missing"):
              (this.state.data.required == 'meaning' ?
-              this.state.data.correct.meaning :
-              this.state.data.correct.reading)
+              <div dangerouslySetInnerHTML={{__html: data.correct.meaning}} /> :
+              <div>{this.state.data.correct.reading}</div>)
           }
         </div>
       );
