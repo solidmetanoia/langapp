@@ -1,7 +1,7 @@
 // Question.js
 
 import React, {Component} from 'react';
-import wanakana, {bind, toHiragana} from 'wanakana';
+import wanakana, {bind, toHiragana, toKatakana} from 'wanakana';
 
 export default class Question extends Component {
   constructor(props) {
@@ -79,7 +79,10 @@ export default class Question extends Component {
         return false;
       }
       if(this.state.data.required == 'reading')
-        e.target.value = toHiragana(e.target.value);
+        if(!/[\u30A0-\u30FF]/g.test(this.state.data.correct.word))
+          e.target.value = toHiragana(e.target.value);
+        else
+          e.target.value = toKatakana(e.target.value);
       this.handleAnswer(e);
     }
   }
@@ -239,7 +242,7 @@ export default class Question extends Component {
 
       postAnswer = (
         <div className='h3 pm0'>
-          {this.state.data.required == 'reading' 
+          {this.state.data.required == 'reading'
             ? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.meaning}} />
             : this.state.data.correct.reading}
         </div>
