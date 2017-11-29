@@ -322,7 +322,7 @@ class StudyController extends Controller
   #====================Data proccessing======================
   ###########################################################
   private function removeParenthesis($string){
-    return preg_replace('/ \(\)/', '', preg_replace('/(?<=\()(?:[^()]+|\([^)]+\))+/', '', $string));
+    return trim(preg_replace('/[ ]?\(\)/', '', preg_replace('/(?<=\()(?:[^()]+|\([^)]+\))+/', '', $string)));
   }
 
   private function separateAnswers($data){
