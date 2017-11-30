@@ -1,7 +1,7 @@
 // Question.js
 
 import React, {Component} from 'react';
-import wanakana, {bind, toHiragana} from 'wanakana';
+import wanakana, {bind, toHiragana, toKatakana} from 'wanakana';
 
 export default class Question extends Component {
   constructor(props) {
@@ -79,7 +79,10 @@ export default class Question extends Component {
         return false;
       }
       if(this.state.data.required == 'reading')
-        e.target.value = toHiragana(e.target.value);
+        if(!/[\u30A0-\u30FF]/g.test(this.state.data.correct.word))
+          e.target.value = toHiragana(e.target.value);
+        else
+          e.target.value = toKatakana(e.target.value);
       this.handleAnswer(e);
     }
   }
@@ -167,12 +170,10 @@ export default class Question extends Component {
             ? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
             : (
               <div>
-              {this.state.data.correct.onyomi != '' &&
-                <div className="flex-grow-1">onyomi: {this.state.data.correct.onyomi}</div>
-              }
-              {this.state.data.correct.kunyomi != '' &&
-                <div className="flex-grow-1">kunyomi: {this.state.data.correct.kunyomi}</div>
-              }
+                {this.state.data.correct.onyomi != '' &&
+                  <div className="flex-grow-1">onyomi: {this.state.data.correct.onyomi}</div> }
+                {this.state.data.correct.kunyomi != '' &&
+                  <div className="flex-grow-1">kunyomi: {this.state.data.correct.kunyomi}</div> }
               </div>
             )
           }
@@ -187,11 +188,12 @@ export default class Question extends Component {
 
       required = (
         <div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
-          {this.state.correct == null ?
-            (this.state.data.required || "Answer type missing"):
-             (this.state.data.required == 'meaning' ?
-              <div dangerouslySetInnerHTML={{__html: data.correct.meaning}} /> :
-              <div>{this.state.data.correct.reading}</div>)
+          {this.state.correct == null
+            ? (this.state.data.required || "Answer type missing")
+            : (this.state.data.required == 'meaning'
+              ? <div dangerouslySetInnerHTML={{__html: data.correct.meaning}} />
+              : <div dangerouslySetInnerHTML={{__html: data.correct.reading}} />
+              )
           }
         </div>
       );
@@ -240,7 +242,9 @@ export default class Question extends Component {
 
       postAnswer = (
         <div className='h3 pm0'>
-          {this.state.data.required == 'reading' ? this.state.data.correct.meaning : this.state.data.correct.reading}
+          {this.state.data.required == 'reading'
+            ? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.meaning}} />
+            : this.state.data.correct.reading}
         </div>
       );
 
@@ -250,11 +254,9 @@ export default class Question extends Component {
           <div className='flex-center flex-column flex-grow-lg-9 flex-grow-6'>
             <div className='flex-center flex-column flex-1'>
               <div className={(this.state.correct == null || this.props.type == 'kanji')? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
-              {this.state.correct != null &&
-                postAnswer}
+              {this.state.correct != null && postAnswer}
               {example}
-              {this.state.correct != null &&
-                information}
+              {this.state.correct != null && information}
             </div>
           </div>
           <div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
