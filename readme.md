@@ -2,6 +2,9 @@
 It's an NGE joke.  
 
 # On list:
+!!!!!!!!!!!!!!!!!!!!!!!!  
+FIX LAYOUTS IN CHROME  
+!!!!!!!!!!!!!!!!!!!!!!!!  
 Add hiragana and katakana to study  
 Add different layout for kanji  
 Add grammar to study  
@@ -9,8 +12,8 @@ Add audio
 Create a Cordova ver. (Running version exists, needs a public server)  
 Create a repo specifically for Cordova ver. with React replaced by React Native  
 Raise / reset difficulty (Raise difficulty to max by writing 'hard souls')  
-Button only / text only modes (Text only available through hard mode)  
 Design changes  
+~~Button only / text only modes~~ Gotta make user write the word after all  
 
 # Ez
 composer update  
@@ -20,7 +23,7 @@ php artisan db:seed
 php artisan passport:install  
 npm install  
 npm run watch-poll  
-  
+
 Edit .env file to use  
 CLIENT_ID and CLIENT_SECRET env variables  
 
