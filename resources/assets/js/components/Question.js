@@ -2,6 +2,7 @@
 
 import React, {Component} from 'react';
 import wanakana, {bind, toHiragana, toKatakana} from 'wanakana';
+import WordDisplay from './WordDisplay';
 
 export default class Question extends Component {
   constructor(props) {
@@ -9,7 +10,7 @@ export default class Question extends Component {
 
     this.state = {
       data: null,
-      correct: null,
+      answer_state: null,
       answer: null,
       message: null,
       hard_mode: null,
@@ -24,7 +25,7 @@ export default class Question extends Component {
         },
         "answer_type": "input",
       },
-      keySequenceNeed: [72, 65, 82, 68, 32, 83, 79, 85, 76, 83],
+      hardModeSequence: [72, 65, 82, 68, 32, 83, 79, 85, 76, 83],
       keySequenceRec: [],
     };
 
@@ -56,9 +57,9 @@ export default class Question extends Component {
         if(response.status == 200){
           // Load new card
           if(response.data.status == 'success')
-            this.setState({correct: true});
-          else if (response.data.status == 'fail')
-            this.setState({correct: false})
+            this.setState({answer_state: true});
+            else if (response.data.status == 'fail')
+            this.setState({answer_state: false})
           else if (response.data.status == 'context'){
             e.target.disabled = false;
           }
@@ -100,14 +101,14 @@ export default class Question extends Component {
 
     {
       let key = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
-      if(this.state.keySequenceNeed.includes(e.keyCode) && !this.state.hard_mode) {
-        if (e.keyCode != this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
+      if(this.state.hardModeSequence.includes(e.keyCode) && !this.state.hard_mode) {
+        if (e.keyCode != this.state.hardModeSequence[this.state.keySequenceRec.length]) {
           this.setState({keySequenceRec: []});
         }
-        if (e.keyCode == this.state.keySequenceNeed[this.state.keySequenceRec.length]) {
+        if (e.keyCode == this.state.hardModeSequence[this.state.keySequenceRec.length]) {
           this.setState({keySequenceRec: this.state.keySequenceRec.concat(key)});
         }
-        if (this.state.keySequenceNeed.toString() == this.state.keySequenceRec.toString()) {
+        if (this.state.hardModeSequence.toString() == this.state.keySequenceRec.toString()) {
           console.log("Hard mode on.");
           console.log("◯　Correct answer streak points doubled.");
           console.log("✕　Incorrect answer point loss quadrupled.");
@@ -145,12 +146,12 @@ export default class Question extends Component {
     })
     .then((response) => {
       if(response.status == 200){
-        this.setState({data: response.data, correct: null, answered: null});
+        this.setState({data: response.data, answer_state: null, answered: null});
       }
     })
     .catch((error) => {
       // Default data used to check if something changed.
-      this.setState({data: this.state.defaultData, correct: null});
+      this.setState({data: this.state.defaultData, answer_state: null});
       console.log(error);
     });
   }
@@ -159,28 +160,11 @@ export default class Question extends Component {
     if(this.state.data == null){
       return <div className="text-center"><div className="h3">Loading...</div></div>
     } else {
-      let data = this.state.data;
+      let data = this.state.data; let answer_state = this.state.answer_state;
       let example, information, required, required_color, postAnswer = null;
       let answerArea = [];
 
-      information = (
-        <div className="d-flex flex-column align-items-center h4 pm0">
-          <hr/>
-          {this.props.type != 'kanji'
-            ? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_en}} />
-            : (
-              <div>
-                {this.state.data.correct.onyomi != '' &&
-                  <div className="flex-grow-1">onyomi: {this.state.data.correct.onyomi}</div> }
-                {this.state.data.correct.kunyomi != '' &&
-                  <div className="flex-grow-1">kunyomi: {this.state.data.correct.kunyomi}</div> }
-              </div>
-            )
-          }
-        </div>
-      );
-
-      switch (this.state.data.required) {
+      switch (data.required) {
         case 'meaning': required_color = 'bg-secondary'; break;
         case 'reading': required_color = 'bg-primary text-white'; break;
         default: required_color = 'bg-warning'; break;
@@ -188,9 +172,9 @@ export default class Question extends Component {
 
       required = (
         <div className={required_color +' h3 p-2 m-0 flex-column flex-center'}>
-          {this.state.correct == null
-            ? (this.state.data.required || "Answer type missing")
-            : (this.state.data.required == 'meaning'
+          {answer_state == null
+            ? (data.required || "Answer type missing")
+            : (data.required == 'meaning'
               ? <div dangerouslySetInnerHTML={{__html: data.correct.meaning}} />
               : <div dangerouslySetInnerHTML={{__html: data.correct.reading}} />
               )
@@ -198,15 +182,7 @@ export default class Question extends Component {
         </div>
       );
 
-      if(data.example != null){
-        example = <div className='h3 p-2'>{data.example}</div>;
-      }
-
-      if(data.correct.example_ja != null){
-        example = <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.example_ja}} />;
-      }
-
-      if(this.state.correct == null){
+      if(answer_state == null){
         switch(data.answer_type){
           case 'button':
             answerArea =
@@ -228,7 +204,7 @@ export default class Question extends Component {
           case 'text':
           case 'input':
           default:
-            if(this.state.data.required == 'reading'){
+            if(data.required == 'reading'){
               answerArea = <input type='text' autoFocus placeholder='・・・' key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center pm0 flex-grow-1 flex-center'></input>;
             }
             else{
@@ -237,14 +213,14 @@ export default class Question extends Component {
             break;
         }
       } else {
-        answerArea = <input type='button' autoFocus key={63} onClick={() => { this.setState({message: null}); this.getNextItem() }} value="next" className={((this.state.correct)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
+        answerArea = <input type='button' autoFocus key={63} onClick={() => { this.setState({message: null}); this.getNextItem() }} value="next" className={((answer_state)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
       }
 
       postAnswer = (
         <div className='h3 pm0'>
-          {this.state.data.required == 'reading'
+          {data.required == 'reading'
             ? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.meaning}} />
-            : this.state.data.correct.reading}
+            : data.correct.reading}
         </div>
       );
 
@@ -252,22 +228,17 @@ export default class Question extends Component {
         <div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
           <div className='h2 p-1 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
           <div className='flex-center flex-column flex-grow-lg-9 flex-grow-6'>
-            <div className='flex-center flex-column flex-1'>
-              <div className={(this.state.correct == null || this.props.type == 'kanji')? 'display-1' : 'display-3'}>{this.state.data.correct.word || "Word missing"}</div>
-              {this.state.correct != null && postAnswer}
-              {example}
-              {this.state.correct != null && information}
-            </div>
+            <WordDisplay data={{word:data.correct, type:this.props.type, answered:answer_state}} lang="not yet used"/>
           </div>
           <div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
             {answerArea}
             <div className='d-flex flex-row flex-1 flex-all-even'>
               <div className='flex-center flex-column'>
-                {this.state.data.correct.type}
+                {data.correct.type}
               </div>
               {required}
-              <div className={(this.state.correct == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>
-                {this.state.correct == false ? <s>{this.state.answered}</s> : null}
+              <div className={(answer_state == false ? 'bg-warning-alt' : '') +' flex-column flex-center'}>
+                {answer_state == false ? <s>{this.state.answered}</s> : null}
               </div>
             </div>
           </div>

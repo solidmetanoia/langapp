@@ -174,6 +174,9 @@ class StudyController extends Controller
       ])
       ->take(5)
       ->select("list.*")->get()->pluck('meaning');
+    foreach ($answers as $key => $answer) {
+      $answers[$key] = htmlspecialchars_decode($answer);
+    }
     return $answers->shuffle();
   }
 
