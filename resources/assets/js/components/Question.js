@@ -161,7 +161,7 @@ export default class Question extends Component {
       return <div className="text-center"><div className="h3">Loading...</div></div>
     } else {
       let data = this.state.data; let answer_state = this.state.answer_state;
-      let example, information, required, required_color, postAnswer = null;
+      let example, information, required, required_color = null;
       let answerArea = [];
 
       switch (data.required) {
@@ -216,19 +216,11 @@ export default class Question extends Component {
         answerArea = <input type='button' autoFocus key={63} onClick={() => { this.setState({message: null}); this.getNextItem() }} value="next" className={((answer_state)?'btn-success-alt':'btn-warning-alt')+' btn btn-lg border-primary pm0 text-center text-white rounded-0 flex-grow-1 flex-center'}></input>
       }
 
-      postAnswer = (
-        <div className='h3 pm0'>
-          {data.required == 'reading'
-            ? <div className='h3 p-2' dangerouslySetInnerHTML={{__html: data.correct.meaning}} />
-            : data.correct.reading}
-        </div>
-      );
-
       return (
         <div className='d-flex flex-column text-center flex-grow-1 flex-basis-0 w-100'>
           <div className='h2 p-1 m-0 bg-secondary d-smh-none flex-column flex-center flex-1'>{this.props.type}</div>
           <div className='flex-center flex-column flex-grow-lg-9 flex-grow-6'>
-            <WordDisplay data={{word:data.correct, type:this.props.type, answered:answer_state}} lang="not yet used"/>
+            <WordDisplay data={{word:data.correct, type:this.props.type, answered:answer_state, required:data.required}} lang="not yet used"/>
           </div>
           <div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
             {answerArea}

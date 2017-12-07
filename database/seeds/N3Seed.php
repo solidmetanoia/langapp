@@ -489,7 +489,7 @@ class N3Seed extends Seeder
         ["word" => "影響","reading" => "えいきょう","meaning" => "influence, effect"],
         ["word" => "地方","reading" => "ちほう","meaning" => "area, locality, region"],
         ["word" => "面","reading" => "めん","meaning" => "face, mug, surface, side or facet, corner, page"],
-        ["word" => "選手","reading" => "せんしゅ","meaning" => "player selected for a team (usually athletic)"],
+        ["word" => "選手","reading" => "せんしゅ","meaning" => "athlete, player (in sports)"],
         ["word" => "実は","reading" => "じつは","meaning" => "actually, in fact"],
         ["word" => "確認","reading" => "かくにん","meaning" => "affirmation, confirmation"],
         ["word" => "ありがとう","reading" => "ありがとう","meaning" => "Thank you"],

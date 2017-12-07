@@ -54,7 +54,9 @@
 		.d-smh-none { display: none; }
 	}
 }
-.pm0 {padding: 0; margin: 0;}
+@for $size from 0 through 10 {
+	.pm#{$size} {padding: #{$size}px; margin: #{$size}px;}
+}
 .overflow-hidden { overflow: hidden; }
 
 .table-bordered {
@@ -91,4 +93,8 @@
 
 rtc {
 	ruby-position: under;
+}
+
+.kanji-details {
+	background: map-get($theme-colors, secondary);
 }
