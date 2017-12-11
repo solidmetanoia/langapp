@@ -514,7 +514,7 @@ class N3Seed extends Seeder
         ["word" => "例","reading" => "れい","meaning" => "instance, example, case"],
         ["word" => "しかも","reading" => "しかも","meaning" => "moreover, furthermore, besides, plus"],
         ["word" => "期待","reading" => "きたい","meaning" => "expectation, anticipation, hope"],
-        ["word" => "そこで","reading" => "そこで","meaning" => "so (conj.), accordingly"],
+        ["word" => "そこで","reading" => "そこで","meaning" => "so (conj.), there, then, accordingly, now"],
         ["word" => "全く","reading" => "まったく","meaning" => "really, completely"],
         ["word" => "効果","reading" => "こうか","meaning" => "effect, result"],
         ["word" => "検討","reading" => "けんとう","meaning" => "consideration, examination, investigation"],
