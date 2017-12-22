@@ -38,7 +38,7 @@ class LoginController extends Controller
 
     if (\Auth::once($login_data)) {
       return $this->try_for_token('password', '', $login_data);
-    } 
+    }
     return response()->json(['Unauthenticated'], 401);
   }
 
@@ -84,7 +84,7 @@ class LoginController extends Controller
     $decoded_response = json_decode($response);
 
     // Oops.
-    if($grantType != 'refreshToken')
+    if($grantType != 'refresh_token')
       \Cookie::queue(
         'refreshToken',
         $decoded_response->refresh_token,
@@ -104,7 +104,7 @@ class LoginController extends Controller
   }
 
   public function logout(Request $request){
-    
+
     $accessToken = \Auth::user()->token();
 
     $refreshToken = \DB::table('oauth_refresh_tokens')
@@ -114,7 +114,7 @@ class LoginController extends Controller
       ]);
 
     $accessToken->revoke();
-    
+
     \Cookie::queue(\Cookie::forget('refreshToken'));
 
     return response()->json(['Logged out'], 200);
