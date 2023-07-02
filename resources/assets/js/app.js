@@ -16,15 +16,15 @@ import PageNotFound from './components/PageNotFound';
 // axios.defaults.baseURL = 'http://192.168.179.17/';
 
 ReactDOM.render((
-	<BrowserRouter>
-		{/* For Cordova replace BrowserRouter with HashRouter*/}
-		<Switch>
-			<Route exact path='/' component={Home}/>
-			<Route exact path='/login' component={Login}/>
-			<Route exact path='/logout' component={Logout}/>
-			<Route exact path='/register' component={Register}/>
-			<ProtectedRoute path='/learn' component={LearnApp}/>
-			<Route component={PageNotFound} />
-		</Switch>
-	</BrowserRouter>
+  <BrowserRouter>
+    {/* For Cordova replace BrowserRouter with HashRouter*/}
+    <Switch>
+      <Route exact path='/' component={Home}/>
+      <Route exact path='/login' component={Login}/>
+      <Route exact path='/logout' component={Logout}/>
+      <Route exact path='/register' component={Register}/>
+      <ProtectedRoute path='/learn' component={LearnApp}/>
+      <Route component={PageNotFound} />
+    </Switch>
+  </BrowserRouter>
 ), document.getElementById('app'));

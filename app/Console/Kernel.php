@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,6 +27,16 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->call(function () {
+          $tables = DB::select('SHOW TABLES');
+          foreach ($tables as $key => $value) {
+            foreach ($value as $key => $table) {
+              if(strpos($table, 'study_progress_') !== false)
+                DB::table($table)->update(['study_rate' => DB::raw('study_rate * .99')]);
+            }
+          }
+        })->daily();
     }
 
     /**

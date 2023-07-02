@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         DB::disableQueryLog();
         DB::beginTransaction();
-		
+
     		// Test user.
     		DB::table('users')->insertGetID([
           'username' => 'test',
@@ -21,12 +21,13 @@ class DatabaseSeeder extends Seeder
           'email' => 'fake@email.com',
           'created_at' => DB::raw('NOW()'),
           'updated_at' => DB::raw('NOW()'),
-        ]);              
+        ]);
 
         $this->call([
             BasicsSeed::class,
             // KanjiSeed::class,
             VocabularySeed::class,
+            N3Seed::class
         ]);
 
         DB::commit();

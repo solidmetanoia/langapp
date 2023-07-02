@@ -14,8 +14,8 @@ class CreateLanguageTrainingTable extends Migration
     public function up()
     {
         // hiragana_katakana_list (id, symbol, reading (, AUDIO PROUNCIATION?));
-        // core_6k_list (id, item, meaning, reading, example (, AUDIO PROUNCIATION ITEM, AUDIO PROUNCIATION EXAMPLE?));
-        
+        // core_list (id, item, meaning, reading, example (, AUDIO PROUNCIATION ITEM, AUDIO PROUNCIATION EXAMPLE?));
+
         Schema::create('basics_list', function (Blueprint $table) {
             $table->increments('id');
             $table->string('letter_ja');
@@ -23,7 +23,7 @@ class CreateLanguageTrainingTable extends Migration
             $table->string('sound');
         });
 
-        Schema::create('core_6k_list', function (Blueprint $table) {
+        Schema::create('core_list', function (Blueprint $table) {
             $table->increments('id');
             $table->string('word');
             $table->string('meaning');
@@ -54,7 +54,7 @@ class CreateLanguageTrainingTable extends Migration
             $table->decimal('study_rate');
             $table->integer('streak')->default(0);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('item_id')->references('id')->on('core_6k_list');
+            $table->foreign('item_id')->references('id')->on('core_list');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
             // $table->timestamps()->useCurrent();
@@ -69,7 +69,7 @@ class CreateLanguageTrainingTable extends Migration
      * @return void
      */
     public function down()
-    {   
+    {
         Schema::table('study_progress_core', function(Blueprint $table){
           $table->dropForeign('study_progress_core_user_id_foreign');
           $table->dropForeign('study_progress_core_item_id_foreign');
@@ -81,7 +81,7 @@ class CreateLanguageTrainingTable extends Migration
         Schema::dropIfExists('study_progress_basic');
         Schema::dropIfExists('study_progress_core');
         Schema::dropIfExists('basics_list');
-        Schema::dropIfExists('core_6k_list');
-        
+        Schema::dropIfExists('core_list');
+
     }
 }

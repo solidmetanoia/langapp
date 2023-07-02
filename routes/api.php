@@ -13,12 +13,16 @@ use Illuminate\Http\Request;
 |
 */
 
+
 Route::group(['middleware' => ['auth:api']], function () {
+	$n_restrictions = ['level' => '[1-5]', 'type' => 'vocabulary||kanji'];
 	Route::post('/logout', 'Auth\LoginController@logout');
 	Route::get('/me', 'UserController@me');
 
-	Route::get('/japanese/vocabulary', 'StudyController@getVocabularyCard');
-	Route::post('/japanese/vocabulary', 'StudyController@postVocabularyCard');
+	Route::get('/japanese/vocabulary/core', 'StudyController@getVocabularyCard');
+	Route::post('/japanese/{type}/core', 'StudyController@postJapaneseCard');
+	Route::get('/japanese/{type}/n{level}', 'StudyController@getNLevelCard')->where($n_restrictions);
+	Route::post('/japanese/{type}/n{level}', 'StudyController@postJapaneseCard')->where($n_restrictions);
 });
 
 Route::get('/{path?}', function () {

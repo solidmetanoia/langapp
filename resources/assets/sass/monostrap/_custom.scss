@@ -8,13 +8,16 @@
 				background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*3);
 			}
 			&.active {
-				border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*6);
+				border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*1.5);
 				background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*4.5);
 			}
 		}
 
-		.nav-item > div {
-			border-left: 10px solid lighten(map-get($theme-colors, primary), $theme-color-interval*6);
+		.nav-item div {
+			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2.5);
+		}
+		.nav-item > div div{
+			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
 		}
 	}
 
@@ -25,7 +28,7 @@
 					background-color: lighten(map-get($theme-colors, primary), $theme-color-interval);
 				}
 				&.active {
-					border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
+					border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval);
 					background-color: lighten(map-get($theme-colors, primary), $theme-color-interval*2);
 				}
 			}
@@ -33,6 +36,9 @@
 
 		.nav-item > div {
 			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2);
+		}
+		.nav-item > div div{
+			border-left: 10px solid darken(map-get($theme-colors, primary), $theme-color-interval*2.5);
 		}
 	}
 
@@ -42,8 +48,15 @@
 	position: absolute;
 	width: 100%;
 	height: 100%;
+	min-height: 460px;
+	min-width: 400px;
+	@media (max-height: 540px) {
+		.d-smh-none { display: none; }
+	}
 }
-
+@for $size from 0 through 10 {
+	.pm#{$size} {padding: #{$size}px; margin: #{$size}px;}
+}
 .overflow-hidden { overflow: hidden; }
 
 .table-bordered {
@@ -67,4 +80,21 @@
 	position: fixed;
 	top: 10%;
 	left: 10%;
+}
+
+// Placeholder color for dark backgrounds
+.bg-primary, .bg-secondary, .bg-warning, .bg-danger, .bg-success{
+	& .form-control::placeholder {
+		color: map-get($theme-colors, light);
+		// Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526.
+		opacity: 1;
+	}
+}
+
+rtc {
+	ruby-position: under;
+}
+
+.kanji-details {
+	background: map-get($theme-colors, secondary);
 }
