@@ -22,14 +22,14 @@ class UserController extends Controller
                     ['user_id', '=', \Auth::id()],
                     ['updated_at', '!=', null]
                   ])->count();
-      $core['total'] = DB::table('core_6k_list')->count();
+      $core['total'] = DB::table('core_list')->count();
       $data = [
         'user' => \Auth::user(),
         'progress' => [
           'core' => $core
         ]
       ];
-    	return response()->json($data, 200);
+      return response()->json($data, 200);
     }
 
     // Requires:

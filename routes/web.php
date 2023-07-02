@@ -11,7 +11,7 @@
 |
 */
 
-Route::post('/login', function () {
+Route::get('/login', function () {
     return view('index');
 })->name('login');
 

@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             BasicsSeed::class,
             // KanjiSeed::class,
             VocabularySeed::class,
-            // N3Seed::class
+            N3Seed::class
         ]);
 
         DB::commit();
