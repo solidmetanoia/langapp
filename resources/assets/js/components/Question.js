@@ -126,7 +126,10 @@ export default class Question extends Component {
     if (this.state.typeTapCount >= 0) {
       this.setState({typeTapCount: this.state.typeTapCount - 1})
     } else {
-      this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
+      if (!this.state.hard_mode) {
+        this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
+        this.getNextItem();
+      }
     }
   }
 
