@@ -16,9 +16,9 @@ export default class Question extends Component {
       hard_mode: null,
       defaultData: {
         "correct": {
-          "word": "TEST",
-          "meaning": "TEST MEANING",
-          "type": "NONE",
+          "word": "If you see this,",
+          "meaning": "something broke",
+          "type": "-",
           "reading": "\u305d\u308c",
           "example_ja": "A TEST SENTENCE",
           "example_en": "MEANING TEST SENTENCE",
@@ -26,6 +26,7 @@ export default class Question extends Component {
         "answer_type": "input",
       },
       hardModeSequence: [72, 65, 82, 68, 32, 83, 79, 85, 76, 83],
+      typeTapCount: 5,
       keySequenceRec: [],
     };
 
@@ -117,6 +118,14 @@ export default class Question extends Component {
           this.getNextItem();
         }
       }
+    }
+  }
+
+  clickedType(e){
+    if (this.state.typeTapCount > 0) {
+      this.setState({typeTapCount: this.state.typeTapCount - 1})
+    } else {
+      this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
     }
   }
 
@@ -225,7 +234,7 @@ export default class Question extends Component {
           <div className='h4 m-0 d-flex flex-column flex-grow-3 flex-basis-0'>
             {answerArea}
             <div className='d-flex flex-row flex-1 flex-all-even'>
-              <div className='flex-center flex-column'>
+              <div className='flex-center flex-column' onClick={this.clickedType}>
                 {data.correct.type}
               </div>
               {required}
