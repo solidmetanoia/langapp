@@ -218,7 +218,7 @@ export default class Question extends Component {
           case 'input':
           default:
             if(data.required == 'reading'){
-              answerArea = <input type='text' autoFocus placeholder='・・・' key={34} ref={elem => bind(elem)} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center pm0 flex-grow-1 flex-center'></input>;
+              answerArea = <input type='text' autoFocus placeholder='・・・' key={34} ref={(elem)=>{if (elem != null) bind(elem);}} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center pm0 flex-grow-1 flex-center'></input>;
             }
             else{
               answerArea = <input type='text' autoFocus placeholder='・・・' key={35} onKeyDown={this.handleKeyDown} className='form-control form-control-lg bg-success text-light text-center pm0 flex-grow-1 flex-center'></input>;
