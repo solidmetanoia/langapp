@@ -62,13 +62,13 @@
 
     .arrow::before {
       bottom: -$popover-arrow-outer-width;
-      margin-left: -($popover-arrow-outer-width - 5);
+      margin-left: math.div($popover-arrow-outer-width, -5);
       border-top-color: $popover-arrow-outer-color;
     }
 
     .arrow::after {
-      bottom: -($popover-arrow-outer-width - 1);
-      margin-left: -($popover-arrow-outer-width - 5);
+      bottom: math.div($popover-arrow-outer-width, -1);
+      margin-left: math.div($popover-arrow-outer-width, -5);
       border-top-color: $popover-arrow-color;
     }
   }
@@ -82,7 +82,7 @@
 
     .arrow::before,
     .arrow::after {
-      margin-top: -($popover-arrow-outer-width - 3);
+      margin-top: math.div($popover-arrow-outer-width, -3);
       border-left-width: 0;
     }
 
@@ -92,7 +92,7 @@
     }
 
     .arrow::after {
-      left: -($popover-arrow-outer-width - 1);
+      left: math.div($popover-arrow-outer-width, -1);
       border-right-color: $popover-arrow-color;
     }
   }
@@ -106,7 +106,7 @@
 
     .arrow::before,
     .arrow::after {
-      margin-left: -($popover-arrow-width - 3);
+      margin-left: math.div($popover-arrow-width, -3);
       border-top-width: 0;
     }
 
@@ -116,7 +116,7 @@
     }
 
     .arrow::after {
-      top: -($popover-arrow-outer-width - 1);
+      top: math.div($popover-arrow-outer-width, -1);
       border-bottom-color: $popover-arrow-color;
     }
 
@@ -142,7 +142,7 @@
 
     .arrow::before,
     .arrow::after {
-      margin-top: -($popover-arrow-outer-width - 3);
+      margin-top: math.div($popover-arrow-outer-width, -3);
       border-right-width: 0;
     }
 
@@ -152,7 +152,7 @@
     }
 
     .arrow::after {
-      right: -($popover-arrow-outer-width - 1);
+      right: math.div($popover-arrow-outer-width, -1);
       border-left-color: $popover-arrow-color;
     }
   }
