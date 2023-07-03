@@ -34,6 +34,7 @@ export default class Question extends Component {
     this.handleAnswer = this.handleAnswer.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.quickButton = this.quickButton.bind(this);
+    this.clickedType = this.clickedType.bind(this);
   }
 
   handleAnswer(e){
@@ -122,7 +123,7 @@ export default class Question extends Component {
   }
 
   clickedType(e){
-    if (this.state.typeTapCount > 0) {
+    if (this.state.typeTapCount >= 0) {
       this.setState({typeTapCount: this.state.typeTapCount - 1})
     } else {
       this.setState({hard_mode: true, message: "HARD MODE ENABLED UNTIL RESTART"});
